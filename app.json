@@ -1,0 +1,12 @@
+{
+  "name": "whatever",
+  "displayName": "JournaliZZe",
+  "expo": {
+    "name": "whatever",
+    "slug": "whatever",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
