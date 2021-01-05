@@ -5,8 +5,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 
 
-import InitialLogoScreen from './InitialLogoScreen';
-import MountainScreen from './MountainScreen';
+import CalendarScreen from './CalendarScreen';
 import HabitsScreen from './HabitsScreen';
 import LoadingScreen from "./LoadingScreen";
 
@@ -46,9 +45,7 @@ const HomeScreen = (props) => {
     return subscriber; // unsubscribe on unmount
   }, [user, screen]);
   
-  if (initializing) return <InitialLogoScreen/>; 
-  
-  // return <LoadingScreen backgroundColor={'blue'}/>; 
+  if (initializing) return <LoadingScreen backgroundColor={'white'}/>; 
 
   
   return (
@@ -58,7 +55,7 @@ const HomeScreen = (props) => {
           <>
           <Content >
           {screen==='Mood'?
-            <MountainScreen monthSvgScreen={monthSvgScreen} user={user} {...props}/>
+            <CalendarScreen monthSvgScreen={monthSvgScreen} user={user} {...props}/>
             :<></>}
           {screen==='Habits'?
             <HabitsScreen monthSvgScreen={monthSvgScreen} user={user} {...props}/>

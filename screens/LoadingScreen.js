@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Text} from "react-native";
 import Spinner from 'react-native-spinkit';
 
 
-const LoadingScreen = ({backgroundColor='#d35400', color='red'}) => {
+const LoadingScreen = ({backgroundColor='#d35400', color='green'}) => {
     var styles = StyleSheet.create({
       container: {
         flex: 1,
@@ -29,7 +29,7 @@ const LoadingScreen = ({backgroundColor='#d35400', color='red'}) => {
       <View style={styles.container}>
         {/* <Spinner style={styles.spinner} isVisible={state.isVisible} size={state.size} type={type} color={state.color}/> */}
         {/* types: ['CircleFlip', 'Bounce', 'Wave', 'WanderingCubes', 'Pulse', 'ChasingDots', 'ThreeBounce', 'Circle', '9CubeGrid', 'WordPress', 'FadingCircle', 'FadingCircleAlt', 'Arc', 'ArcAlt'], */}
-        <Spinner style={styles.spinner} isVisible={true} size={100} type={'Circle'} color={color}/>
+        <Spinner style={styles.spinner} isVisible={true} size={100} type={'9CubeGrid'} color={color}/>
       </View>
     );
 

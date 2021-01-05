@@ -13,7 +13,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import MountainScreen from './screens/MountainScreen';
 import NotesScreen from './screens/NotesScreen';
 
 
@@ -24,7 +23,7 @@ const App = () => {
 
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home"  screenOptions={{title: 'JournaliZZe'}}>
+        <Stack.Navigator initialRouteName="Home"  screenOptions={{title: 'Pocket inCheck'}}>
           <Stack.Screen name="Home">
             {props => <HomeScreen {...props} extraData={{}} />}
           </Stack.Screen>
@@ -34,9 +33,6 @@ const App = () => {
           <Stack.Screen name="Register">
             {props => <RegisterScreen {...props} extraData={{}} />}
           </Stack.Screen>
-          {/* <Stack.Screen name="Mountain">
-            {props => <MountainScreen {...props} extraData={{}} />}
-          </Stack.Screen> */}
           <Stack.Screen name="Notes">
             {props => <NotesScreen {...props} extraData={{}} />}
           </Stack.Screen>
