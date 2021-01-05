@@ -116,7 +116,7 @@ const Notes = ({route, navigation}) => {
    }
 
    useEffect(() => {
-      navigation.setOptions({ title: `JournaliZZe - ${dayNum}` })
+      navigation.setOptions({ title: `${dayNum}` })
       let unsubscribeDay = () => {};
       setInitializing(true);
       try {
