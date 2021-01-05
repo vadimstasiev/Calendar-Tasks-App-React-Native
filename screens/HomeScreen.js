@@ -14,7 +14,6 @@ let db = firestore();
 
 const HomeScreen = (props) => {
 
-  const monthSvgScreen = 'January21';
   
   const {navigation} = props;
   // Set an initializing state whilst Firebase connects
@@ -56,10 +55,10 @@ const HomeScreen = (props) => {
           <>
           <Content >
           {screen==='Mood'?
-            <CalendarScreen monthSvgScreen={monthSvgScreen} user={user} {...props}/>
+            <CalendarScreen user={user} {...props}/>
             :<></>}
           {screen==='Habits'?
-            <HabitsScreen monthSvgScreen={monthSvgScreen} user={user} {...props}/>
+            <HabitsScreen user={user} {...props}/>
           :<></>}
           </Content>
           <Footer>

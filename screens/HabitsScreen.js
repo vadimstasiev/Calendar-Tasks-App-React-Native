@@ -110,6 +110,8 @@ const TodoList = (props) => {
 
 const HabitsScreen = ({navigation, user, monthSvgScreen}) => {
 
+   navigation.setOptions({ title: `Habits` })
+
   const [title, setTitle] = useState("");
 
 

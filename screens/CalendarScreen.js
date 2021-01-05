@@ -53,8 +53,9 @@ const testIDs = {
   return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(date);//format: yyyy-mm-dd;
 }
 
-const CalendarsScreen = ({navigation, route, user}) => {
+const CalendarsScreen = ({navigation, user}) => {
 
+  navigation.setOptions({ title: `Calendar` });
   const defaultColor = "white";
   const colorOptions = ['#3a402a', '#688052', '#6aab6a', '#d9b358', '#fff2a7'];
   let defaultMood = 'None';

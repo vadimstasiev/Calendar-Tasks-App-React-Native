@@ -23,7 +23,7 @@ const App = () => {
 
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home"  screenOptions={{title: 'Pocket inCheck'}}>
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home">
             {props => <HomeScreen {...props} extraData={{}} />}
           </Stack.Screen>
