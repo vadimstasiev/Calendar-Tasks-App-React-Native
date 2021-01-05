@@ -1,34 +1,40 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+
 import React, {useState, Fragment} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 
+let db = firestore();
+
+
 const testIDs = {
-   menu: {
-     CONTAINER: 'menu',
-     CALENDARS: 'calendars_btn',
-     CALENDAR_LIST: 'calendar_list_btn',
-     HORIZONTAL_LIST: 'horizontal_list_btn',
-     AGENDA: 'agenda_btn',
-     EXPANDABLE_CALENDAR: 'expandable_calendar_btn',
-     WEEK_CALENDAR: 'week_calendar_btn'
-   },
-   calendars: {
-     CONTAINER: 'calendars',
-     FIRST: 'first_calendar',
-     LAST: 'last_calendar'
-   },
-   calendarList: {CONTAINER: 'calendarList'},
-   horizontalList: {CONTAINER: 'horizontalList'},
-   agenda: {
-     CONTAINER: 'agenda',
-     ITEM: 'item'
-   },
-   expandableCalendar: {CONTAINER: 'expandableCalendar'},
-   weekCalendar: {CONTAINER: 'weekCalendar'}
- };
+  menu: {
+    CONTAINER: 'menu',
+    CALENDARS: 'calendars_btn',
+    CALENDAR_LIST: 'calendar_list_btn',
+    HORIZONTAL_LIST: 'horizontal_list_btn',
+    AGENDA: 'agenda_btn',
+    EXPANDABLE_CALENDAR: 'expandable_calendar_btn',
+    WEEK_CALENDAR: 'week_calendar_btn'
+  },
+  calendars: {
+    CONTAINER: 'calendars',
+    FIRST: 'first_calendar',
+    LAST: 'last_calendar'
+  },
+  calendarList: {CONTAINER: 'calendarList'},
+  horizontalList: {CONTAINER: 'horizontalList'},
+  agenda: {
+    CONTAINER: 'agenda',
+    ITEM: 'item'
+  },
+  expandableCalendar: {CONTAINER: 'expandableCalendar'},
+  weekCalendar: {CONTAINER: 'weekCalendar'}
+};
 
  const getCurrentDate=()=>{
 
@@ -47,25 +53,27 @@ const testIDs = {
   return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(date);//format: yyyy-mm-dd;
 }
 
-const CalendarsScreen = () => {
+const CalendarsScreen = ({navigation, route, user}) => {
 
-  const getDisabledDates = (startDate, endDate, daysToDisable) => {
-    const disabledDates = {};
-    const start = moment(startDate);
-    const end = moment(endDate);
-
-    for (let m = moment(start); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
-      if (_.includes(daysToDisable, m.weekday())) {
-        disabledDates[m.format('YYYY-MM-DD')] = {disabled: true};
-      }
-    }
-    return disabledDates;
-  };
+  const defaultColor = "white";
+  const colorOptions = ['#3a402a', '#688052', '#6aab6a', '#d9b358', '#fff2a7'];
+  let defaultMood = 'None';
+  const moods = {
+     '#fff2a7':'Awesome',
+     '#d9b358':'Good',
+     '#6aab6a':'Fine',
+     '#688052':'Bad',
+     '#3a402a':'Terrible'
+  }
 
 
-  console.log()
-
-   const renderCalendarWithPeriodMarkingAndDotMarking = () => {
+  const dayPress = (dayData) => {
+    console.log(dayData)
+    const {day, month} = dayData;
+    navigation.navigate('Notes', {user, day, month, moods, defaultMood, colorOptions})
+  }
+  
+  const renderCalendarWithPeriodMarkingAndDotMarking = () => {
       return (
       <Fragment>
          {/* <Text style={styles.text}>Calendar with period marking and dot marking</Text> */}
@@ -73,9 +81,11 @@ const CalendarsScreen = () => {
             current={getCurrentDate()}
             // minDate={'2021-01-01'}
             // disabledDaysIndexes={[0, 6]}
+            onDayPress={dayPress}
             markingType={'period'}
             markedDates={{
-            '2021-05-15': {marked: true, dotColor: '#50cebb'},
+            '2021-05-14': {marked: true, dotColor: '#50cebb'},
+            '2021-05-15': {marked: true, dotColor: 'red'},
             '2021-01-16': {marked: true, dotColor: '#50cebb'},
             '2021-01-21': {startingDay: true, color: '#50cebb', textColor: 'white'},
             '2021-01-22': {

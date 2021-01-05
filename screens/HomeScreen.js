@@ -6,6 +6,7 @@ import firestore from "@react-native-firebase/firestore";
 
 
 import CalendarScreen from './CalendarScreen';
+import CalendarScreenDemo from './CalendarScreenDemo';
 import HabitsScreen from './HabitsScreen';
 import LoadingScreen from "./LoadingScreen";
 

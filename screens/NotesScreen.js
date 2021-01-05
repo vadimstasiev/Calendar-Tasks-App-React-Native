@@ -48,7 +48,7 @@ const HabitCheckBox = ({habit, toggleChecked, checked}) => {
 }
 
 const Notes = ({route, navigation}) => {
-   const { user, dayNum, monthSvgScreen, moods, defaultMood, colorOptions } = route.params;
+   const { user, day, month, moods, defaultMood, colorOptions } = route.params;
 
    const [initializing, setInitializing] = useState(true)
 
@@ -91,8 +91,8 @@ const Notes = ({route, navigation}) => {
    }
 
    const submit = (submitMood=mood) => {
-      console.log(user.uid, monthSvgScreen, dayNum)
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc(String(dayNum)).set({
+      console.log(user.uid, month, day)
+      db.collection("users").doc(user.uid).collection(month).doc(String(day)).set({
          message: input,
          mood: submitMood, 
          habitsChecked: habitsChecked
@@ -103,7 +103,7 @@ const Notes = ({route, navigation}) => {
    }
 
    const deleteDay = () =>{
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc(String(dayNum)).update({
+      db.collection("users").doc(user.uid).collection(month).doc(String(day)).update({
          message:firebase.firestore.FieldValue.delete(),
          mood: firebase.firestore.FieldValue.delete(), 
          habitsChecked: firebase.firestore.FieldValue.delete()
@@ -116,11 +116,11 @@ const Notes = ({route, navigation}) => {
    }
 
    useEffect(() => {
-      navigation.setOptions({ title: `${dayNum}` })
+      navigation.setOptions({ title: `${day}` })
       let unsubscribeDay = () => {};
       setInitializing(true);
       try {
-         unsubscribeDay = db.collection("users").doc(user.uid).collection(monthSvgScreen).doc(String(dayNum)).onSnapshot( async querySnapshot=>{
+         unsubscribeDay = db.collection("users").doc(user.uid).collection(month).doc(String(day)).onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data()
             if (data){
                setFirestoreInput(data.message);
@@ -140,7 +140,7 @@ const Notes = ({route, navigation}) => {
 
       let unsubscribeHabbits = () => {};
       try {
-         unsubscribeHabbits = db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').onSnapshot( async querySnapshot=>{
+         unsubscribeHabbits = db.collection("users").doc(user.uid).collection(month).doc('Habits').onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data();
             let firebaseHabits = [];
             if (data) {
