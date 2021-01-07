@@ -16,6 +16,8 @@ import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
 import Spinner from 'react-native-spinkit';
 
+import CurrencyInput from 'react-native-currency-input';
+
 import { firebase } from "@react-native-firebase/auth";
 import { isLoaded } from "expo-font";
 
@@ -44,7 +46,7 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
    return (
      <View style={styles.listTile}>
       
-      <Card style={isEditing?{width: "62%"}:{width: "85%"}}>
+      <Card style={isEditing?{width: "50%"}:{width: "85%"}}>
          <CardItem>
             <Body>
             {isEditing?
@@ -99,7 +101,7 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
          </CardItem>
       </Card>
       {isEditing?
-         <Card style={{width:"17%"}}>
+         <Card style={{width:"25%"}}>
             <CardItem>
                <Body>
                   <>
@@ -189,7 +191,8 @@ const DayScreen = ({route, navigation}) => {
 
   // function to add expense object in expense list
   const addExpense = async () => {
-      if (titleDescription.length > 0) {
+     console.log(titlePrice.length)
+      if (titleDescription.length > 0 && String(titlePrice).length > 0) {
          // Add expense to the list
          let sendToFirestoreexpenses = {}
          let description=titleDescription;
@@ -302,12 +305,25 @@ const DayScreen = ({route, navigation}) => {
           onChangeText={value => setTitleDescription(value)}
           style={styles.textboxDescription}
         />
-        <TextInput
+        {/* <TextInput
           placeholder="Price"
           value={titlePrice}
           onChangeText={value => setTitlePrice(value)}
           style={styles.textboxPrice}
-        />
+        /> */}
+        <CurrencyInput
+            placeholder="Price"
+            value={titlePrice}
+            onChangeValue={value => setTitlePrice(value)}
+            unit=""
+            delimiter=","
+            separator="."
+            precision={2}
+            // onChangeText={(formattedValue) => {
+            //    console.log(formattedValue); // $2,310.46
+            // }}
+            style={styles.textboxPrice}
+         />
         <Button title="Add" color="green" onPress={() => addExpense()} />
       </View>
 
@@ -364,7 +380,7 @@ const styles = StyleSheet.create({
       margin: 10,
       marginRight: 0, 
       marginLeft: 0, 
-      width: "65%", 
+      width: "58%", 
       fontSize:16,
       height: 39
    },
@@ -376,7 +392,7 @@ const styles = StyleSheet.create({
       // paddingLeft: 3,
       margin: 10,
       marginLeft: 5, 
-      width: "17%", 
+      width: "25%", 
       fontSize:16,
       height: 39
    },

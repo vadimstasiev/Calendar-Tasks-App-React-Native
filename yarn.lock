@@ -7122,6 +7122,11 @@ react-native-color-palette@^2.2.0:
   resolved "https://registry.yarnpkg.com/react-native-color-palette/-/react-native-color-palette-2.2.0.tgz#be5dc50c20d22a704dfd7870f4bb43fdfb8df96f"
   integrity sha512-5sAh7veeSMg7KOijnBTj4/A54JzfFfOjo7r9YYCnEF9HWgpMHr6oSjERM18qzP561FFVMElVOh3nCit1pvq6xQ==
 
+react-native-currency-input@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-currency-input/-/react-native-currency-input-0.1.2.tgz#e619b6252d74b81f9351a16f1a2dd90e5d2de97f"
+  integrity sha512-v/io3g4HMmabuRXpsuwDhtSnwyN2wdZItNC8C1k6XLlDR1ZG97pAFpNPvoLzpq+LOaFhllfOkCG0zAKYpLSJ0w==
+
 react-native-drawer@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"
