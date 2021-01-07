@@ -200,9 +200,9 @@ const DayScreen = ({route, navigation}) => {
          // }
          // await setExpenses([...expenses, { id: Date.now(), name: titleDescription}]);
          // clear the value of the textfield
-         await db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[Date.now()]:[description, price]})
+         await db.collection("users").doc(user.uid).collection(month).doc(day).update({[Date.now()]:[description, price]})
          .catch((error) => {
-            db.collection("users").doc(user.uid).collection(month).doc('expenses').set({[Date.now()]:[description, price]})
+            db.collection("users").doc(user.uid).collection(month).doc(day).set({[Date.now()]:[description, price]})
             .catch((error) => {
                console.error("Error adding expense: ", error);
             });
@@ -220,7 +220,7 @@ const DayScreen = ({route, navigation}) => {
   const editExpense = (id, newDescription, newPrice) => {
       // setSortExpenses([...expenses.filter((expense)=>expense.id!==id), { id: id, name: titleDescription}]);
       // console.log(id, titleDescription)
-      return db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
+      return db.collection("users").doc(user.uid).collection(month).doc(day).update({[id]:[newDescription, newPrice]})
   }
 
 
@@ -231,7 +231,7 @@ const DayScreen = ({route, navigation}) => {
       // setSortExpenses(expenses.filter(expense => {
       //    return expense.id !== id;
       // }));
-      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
+      db.collection("users").doc(user.uid).collection(month).doc(day).update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
          console.error("Error deleting expense: ", error);
       });
@@ -250,7 +250,7 @@ const DayScreen = ({route, navigation}) => {
       let unsubscribe = () => {};
       setInitializing(true);
       try {
-         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('expenses').onSnapshot( async querySnapshot=>{
+         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc(day).onSnapshot( async querySnapshot=>{
             // await setInitializing(true);
             let data = await querySnapshot.data()
             let firebaseExpenses = []
@@ -279,12 +279,12 @@ const DayScreen = ({route, navigation}) => {
 
       setInitializing(false);
 
-      const navUnsubscribe = navigation.addListener('onLeaving', (e) => {
-         submit();
-      })
+      // const navUnsubscribe = navigation.addListener('onLeaving', (e) => {
+      //    submit();
+      // })
       return () => {
          unsubscribe();
-         navUnsubscribe();
+         // navUnsubscribe();
       }
  }, []);
 
