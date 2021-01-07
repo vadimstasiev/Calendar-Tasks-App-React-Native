@@ -7,7 +7,7 @@ import firestore from "@react-native-firebase/firestore";
 
 import CalendarScreen from './CalendarScreen';
 import CalendarScreenDemo from './CalendarScreenDemo';
-// import GraphScreen from './GraphScreen';
+import UsualExpenses from './UsualExpenses';
 import LoadingScreen from "./LoadingScreen";
 
 let db = firestore();
@@ -57,9 +57,9 @@ const HomeScreen = (props) => {
           {screen==='Calendar'?
             <CalendarScreen user={user} {...props}/>
             :<></>}
-          {/* {screen==='Graph'?
-            <GraphScreen user={user} {...props}/>
-          :<></>} */}
+          {screen==='UsualExpenses'?
+            <UsualExpenses user={user} {...props}/>
+          :<></>}
           </Content>
           <Footer>
             <FooterTab style={{backgroundColor:'green'}}>

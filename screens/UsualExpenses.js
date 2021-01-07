@@ -20,23 +20,21 @@ import { firebase } from "@react-native-firebase/auth";
 
 let db = firestore();
 
-const TodoList = (props) => {
+const ItemList = (props) => {
+   const month = new Date().getMonth() + 1;
    const [isEditing, setIsEditing] = useState('false');
-   const [habit, setHabit] = useState(props.habit)
+   const [usualExpense, setusualExpense] = useState(props.usualExpense)
    const editClicked=()=>{
       setIsEditing(!isEditing);
-      // console.log('update', props.habit.id, habit.name)
-      props.editHabit(props.habit.id, habit.name);
+      props.editusualExpense(props.usualExpense.id, usualExpense.name);
    }
    return (
      <View style={styles.listTile}>
-      {/* <Text style={styles.title}>{props.habit.name}</Text> */}
       {isEditing?
          <Icon
             name="delete"
             size={20}
             color="red"
-            // onPress={() => props.deleteHabit(props.habit.id)}
             onPress={() => Alert.alert(
                "Delete",
                "Are you sure you want to delete?",
@@ -45,7 +43,7 @@ const TodoList = (props) => {
                    text: "Cancel",
                    style: "cancel"
                  },
-                 { text: "OK", onPress: () => props.deleteHabit(props.habit.id) }
+                 { text: "OK", onPress: () => props.deleteusualExpense(props.usualExpense.id) }
                ],
                { cancelable: true }
              )}
@@ -58,18 +56,18 @@ const TodoList = (props) => {
             <Body>
             {isEditing?
                <Text >
-               {props.habit.name}
+               {props.usualExpense.name}
                {'     '}
                </Text>
             :
             <>
                <TextInput
-               defaultValue={String(props.habit.name)}
+               defaultValue={String(props.usualExpense.name)}
                autoFocus={true}
                onEndEditing={()=>{
                   editClicked()
                }}
-               onChangeText={value => setHabit({...habit, name: value})}
+               onChangeText={value => setusualExpense({...usualExpense, name: value})}
                />
             </>
             }
@@ -85,7 +83,7 @@ const TodoList = (props) => {
             name={"edit"}
             size={20}
             color="#666666"
-            // onPress={() => props.checkHabit(props.habit.id)}
+            // onPress={() => props.checkusualExpense(props.usualExpense.id)}
             />
       </TouchableOpacity>
       :
@@ -108,33 +106,33 @@ const TodoList = (props) => {
  }
 
 
-const HabitsScreen = ({navigation, user, monthSvgScreen}) => {
+const usualExpensesScreen = ({navigation, user, month}) => {
 
-   navigation.setOptions({ title: `Habits` })
+   navigation.setOptions({ title: `usualExpenses` })
 
   const [title, setTitle] = useState("");
 
 
-  // Initalize empty array to store habits
-  const [habits, setHabits] = useState([]);
+  // Initalize empty array to store usualExpenses
+  const [usualExpenses, setusualExpenses] = useState([]);
 
   const [initializing, setInitializing] = useState(true)
 
-  // function to add habit object in habit list
-  const addHabit = async () => {
+  // function to add usualExpense object in usualExpense list
+  const addusualExpense = async () => {
       if (title.length > 0) {
-         // Add habit to the list
-         let sendToFirestoreHabits = {}
-         let habitMessage=title;
-         // for (let habit in habits){
-         //    console.log('habit', habits[habit])
-         //    sendToFirestoreHabits[habits[habit].id]=habits[habit].name;
+         // Add usualExpense to the list
+         let sendToFirestoreusualExpenses = {}
+         let usualExpenseMessage=title;
+         // for (let usualExpense in usualExpenses){
+         //    console.log('usualExpense', usualExpenses[usualExpense])
+         //    sendToFirestoreusualExpenses[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].name;
          // }
-         // await setHabits([...habits, { id: Date.now(), name: title}]);
+         // await setusualExpenses([...usualExpenses, { id: Date.now(), name: title}]);
          // clear the value of the textfield
-         await db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').update({[Date.now()]:habitMessage})
+         await db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[Date.now()]:usualExpenseMessage})
          .catch((error) => {
-            db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').set({[Date.now()]:habitMessage})
+            db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').set({[Date.now()]:usualExpenseMessage})
             .catch((error) => {
                console.error("Error adding document: ", error);
             });
@@ -142,39 +140,39 @@ const HabitsScreen = ({navigation, user, monthSvgScreen}) => {
          setTitle("");
       }
       let temp = {}
-      for (let habit in habits){
-         console.log('habit', habits[habit])
-         temp[habits[habit].id]=habits[habit].name;
+      for (let usualExpense in usualExpenses){
+         console.log('usualExpense', usualExpenses[usualExpense])
+         temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].name;
       }
 
   };
 
-  const editHabit = (id, habbitUpdate) => {
-      // setSortHabbits([...habits.filter((habit)=>habit.id!==id), { id: id, name: title}]);
+  const editusualExpense = (id, habbitUpdate) => {
+      // setSortHabbits([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, name: title}]);
       // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').update({[id]:habbitUpdate})
+      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:habbitUpdate})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
   }
 
 
-  // function to delete habit from the habit list
-  const deleteHabit = id => {
-      // loop through habit list and return habits that don't match the id
-      // update the state using setHabits function
-      // setSortHabbits(habits.filter(habit => {
-      //    return habit.id !== id;
+  // function to delete usualExpense from the usualExpense list
+  const deleteusualExpense = id => {
+      // loop through usualExpense list and return usualExpenses that don't match the id
+      // update the state using setusualExpenses function
+      // setSortHabbits(usualExpenses.filter(usualExpense => {
+      //    return usualExpense.id !== id;
       // }));
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').update({[id]:firebase.firestore.FieldValue.delete()})
+      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
   };
 
   const setSortHabbits = (inputHabbits) => {
-      // var temp = habits.slice(0);
-      setHabits([...inputHabbits.sort((a,b) => {
+      // var temp = usualExpenses.slice(0);
+      setusualExpenses([...inputHabbits.sort((a,b) => {
          var x = a.id.toLowerCase();
          var y = b.id.toLowerCase();
          return x < y ? -1 : x > y ? 1 : 0;
@@ -185,26 +183,26 @@ const HabitsScreen = ({navigation, user, monthSvgScreen}) => {
       let unsubscribe = () => {};
       setInitializing(true);
       try {
-         unsubscribe = db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('Habits').onSnapshot( async querySnapshot=>{
+         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
             // await setInitializing(true);
             let data = await querySnapshot.data()
-            let firebaseHabits = []
+            let firebaseusualExpenses = []
              console.log('data', data)
             if (data) {
                for (const id in data) {
                   const name = data[id];
                   // console.log('here', id, name)
-                  firebaseHabits.push({id, name})
+                  firebaseusualExpenses.push({id, name})
                }
-            // habits.map((habit) => {
-            //    firebaseHabits = firebaseHabits.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            // usualExpenses.map((usualExpense) => {
+            //    firebaseusualExpenses = firebaseusualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
             // })
             let localHabbits;
-            firebaseHabits.map((habit) => {
-               localHabbits = habits.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            firebaseusualExpenses.map((usualExpense) => {
+               localHabbits = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
             })
-            console.log(firebaseHabits)
-            setSortHabbits([...habits, ...firebaseHabits]);
+            console.log(firebaseusualExpenses)
+            setSortHabbits([...usualExpenses, ...firebaseusualExpenses]);
             // await setInitializing(false);
          }
          })
@@ -224,28 +222,28 @@ const HabitsScreen = ({navigation, user, monthSvgScreen}) => {
  }, []);
 
    if (initializing) return <View style={styles.loadingContainer}>
-      <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
+      <LoadingScreen backgroundColor={'white'} color={'grey'}/>
    </View>
 
   return (
     <View style={styles.container}>
-      <View style={styles.habit}>
+      <View style={styles.usualExpense}>
         <TextInput
-          placeholder="Add a Habit"
+          placeholder="Add a usualExpense"
           value={title}
           onChangeText={value => setTitle(value)}
           style={styles.textbox}
         />
-        <Button title="Add" color="#4050b5" onPress={() => addHabit()} />
+        <Button title="Add" color="green" onPress={() => addusualExpense()} />
       </View>
 
       <ScrollView >
-        {habits.map(habit => (
-          <TodoList
-            key={habit.id}
-            habit={habit}
-            editHabit={editHabit}
-            deleteHabit={deleteHabit}
+        {usualExpenses.map(usualExpense => (
+          <ItemList
+            key={usualExpense.id}
+            usualExpense={usualExpense}
+            editusualExpense={editusualExpense}
+            deleteusualExpense={deleteusualExpense}
           />
         ))}
       </ScrollView>
@@ -275,7 +273,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "flex-start"
    },
-   habit: {
+   usualExpense: {
       flexDirection: "row",
       width: "100%",
       justifyContent: "center",
@@ -283,7 +281,7 @@ const styles = StyleSheet.create({
    },
    textbox: {
       borderWidth: 1,
-      borderColor: "#4050b5",
+      borderColor: "green",
       borderRadius: 8,
       padding: 10,
       margin: 10,
@@ -309,4 +307,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HabitsScreen;
+export default usualExpensesScreen;

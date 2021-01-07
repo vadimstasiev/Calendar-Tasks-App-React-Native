@@ -211,7 +211,6 @@ const DayScreen = ({route, navigation}) => {
 
    const [initializing, setInitializing] = useState(true)
 
-   const [itemDescription, setItemDescription] = useState('')
 
    // Initalize empty array to store expenses
    const [expenses, setExpenses] = useState([])
@@ -378,8 +377,7 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               {/* <Text style={{color:"white", fontWeight: 900}}>Total: </Text> */}
-               <Text style={{color:"white"}}>Total: { totalCost }</Text>
+               <Text style={{color:"white", fontWeight: "bold"}}>Total: { totalCost }</Text>
             </Button>
          </FooterTab>
       </Footer>
