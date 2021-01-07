@@ -7,7 +7,7 @@ import firestore from "@react-native-firebase/firestore";
 
 import CalendarScreen from './CalendarScreen';
 import CalendarScreenDemo from './CalendarScreenDemo';
-import HabitsScreen from './HabitsScreen';
+// import GraphScreen from './GraphScreen';
 import LoadingScreen from "./LoadingScreen";
 
 let db = firestore();
@@ -19,7 +19,7 @@ const HomeScreen = (props) => {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const [screen, setScreen] = useState('Mood');
+  const [screen, setScreen] = useState('Calendar');
 
 
   // Handle user state changes
@@ -54,21 +54,21 @@ const HomeScreen = (props) => {
         user?
           <>
           <Content >
-          {screen==='Mood'?
+          {screen==='Calendar'?
             <CalendarScreen user={user} {...props}/>
             :<></>}
-          {screen==='Habits'?
-            <HabitsScreen user={user} {...props}/>
-          :<></>}
+          {/* {screen==='Graph'?
+            <GraphScreen user={user} {...props}/>
+          :<></>} */}
           </Content>
           <Footer>
-            <FooterTab>
-              <Button active={screen==='Mood'} onPress={(e)=>setScreen('Mood')}>
-                <Text>Mood</Text>
-              </Button>
-              <Button active={screen==='Habits'} onPress={(e)=>setScreen('Habits')}>
-                <Text>Habits</Text>
-              </Button>
+            <FooterTab style={{backgroundColor:'green'}}>
+              {/* <Button active={screen==='Calendar'} onPress={(e)=>setScreen('Calendar')}>
+                <Text>Calendar</Text>
+              </Button> */}
+              {/* <Button active={screen==='Graph'} onPress={(e)=>setScreen('Graph')}>
+                <Text>Graph</Text>
+              </Button> */}
               <Button onPress={signOut}>
                 <Text>Sign Out</Text>
               </Button>

@@ -5,18 +5,19 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   TextInput,
+  Button as RButton,
   ScrollView,
   TouchableOpacity,
   Alert
 } from "react-native";
-import { Container, Header, Content, Card, CardItem,  Body, Right, } from 'native-base';
+import { Container, Header, Content, Card, CardItem, Button, Body, Right, Footer, FooterTab } from 'native-base';
 import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
 import Spinner from 'react-native-spinkit';
 
 import CurrencyInput from 'react-native-currency-input';
+import { FakeCurrencyInput } from 'react-native-currency-input';
 
 import { firebase } from "@react-native-firebase/auth";
 import { isLoaded } from "expo-font";
@@ -62,9 +63,9 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
                <Card style={{width:"100%"}}>
                   <CardItem >
                      <TextInput
-                        style={{ width:"100%", border:0, margin:0, padding:0}} 
+                        style={{ width:"100%", margin:0, padding:0}} 
                         defaultValue={String(expenseDescription)}
-                        autoFocus={true}
+                        // autoFocus={true}
                         // onEndEditing={()=>{
                         //    editClicked()
                         // }}
@@ -75,14 +76,29 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
                <Text style={{}}>Cost:</Text>
                <Card style={{width:"100%"}}>
                   <CardItem>
-                     <TextInput
-                        style={{ width:"100%", border:0, margin:0, padding:0}} 
+                     {/* <TextInput
+                        style={{ width:"100%", margin:0, padding:0}} 
                         defaultValue={String(expensePrice)}
                         autoFocus={true}
                         // onEndEditing={()=>{
                         //    editClicked()
                         // }}
                         onChangeText={value => setExpensePrice(value)}
+                     /> */}
+                     <FakeCurrencyInput
+                        autoFocus={true}
+                        style={{ width:"100%", margin:0, padding:0}} 
+                        value={expensePrice}
+                        onChangeValue={value => setExpensePrice(value)}
+                        unit="£"
+                        delimiter=","
+                        separator="."
+                        precision={2}
+                        // editable={false}
+                        // onChangeText={(formattedValue) => {
+                        //    console.log(formattedValue); // $2,310.46
+                        // }}
+                        // style={styles.textboxPrice}
                      />
                   </CardItem>
                </Card>
@@ -105,10 +121,25 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
             <CardItem>
                <Body>
                   <>
-                     <Text>
+                     {/* <Text>
                      {expensePrice}
                      {'     '}
-                     </Text>
+                     </Text> */}
+                     <FakeCurrencyInput
+                        // autoFocus={true}
+                        style={{ width:"100%", margin:0, padding:0, fontSize:12}} 
+                        value={expensePrice}
+                        onChangeValue={value => setExpensePrice(value)}
+                        unit="£"
+                        delimiter=","
+                        separator="."
+                        precision={2}
+                        editable={false}
+                        // onChangeText={(formattedValue) => {
+                        //    console.log(formattedValue); // $2,310.46
+                        // }}
+                        // style={styles.textboxPrice}
+                     />
                   </>
                </Body>
             </CardItem>
@@ -188,6 +219,8 @@ const DayScreen = ({route, navigation}) => {
    const [titleDescription, setTitleDescription] = useState("");
 
    const [titlePrice, setTitlePrice] = useState("")
+
+   const [totalCost, setTotalCost] = useState(0)
 
   // function to add expense object in expense list
   const addExpense = async () => {
@@ -297,25 +330,26 @@ const DayScreen = ({route, navigation}) => {
    </View>
 
   return (
-    <View style={styles.container}>
-      <View style={styles.expense}>
-        <TextInput
-          placeholder="Add an expense"
-          value={titleDescription}
-          onChangeText={value => setTitleDescription(value)}
-          style={styles.textboxDescription}
-        />
-        {/* <TextInput
-          placeholder="Price"
-          value={titlePrice}
-          onChangeText={value => setTitlePrice(value)}
-          style={styles.textboxPrice}
-        /> */}
-        <CurrencyInput
+   <>
+      <Container style={styles.container}>
+         <View style={styles.expense}>
+         <TextInput
+            placeholder="Add an expense"
+            value={titleDescription}
+            onChangeText={value => setTitleDescription(value)}
+            style={styles.textboxDescription}
+         />
+         {/* <TextInput
+            placeholder="Price"
+            value={titlePrice}
+            onChangeText={value => setTitlePrice(value)}
+            style={styles.textboxPrice}
+         /> */}
+         <CurrencyInput
             placeholder="Price"
             value={titlePrice}
             onChangeValue={value => setTitlePrice(value)}
-            unit=""
+            unit="£"
             delimiter=","
             separator="."
             precision={2}
@@ -324,22 +358,31 @@ const DayScreen = ({route, navigation}) => {
             // }}
             style={styles.textboxPrice}
          />
-        <Button title="Add" color="green" onPress={() => addExpense()} />
-      </View>
+         
+         <RButton title="Add" color="green" onPress={() => addExpense()} />
+         </View>
 
-      <ScrollView >
-        {expenses.map(expense => (
-          <ItemList
-            key={expense.id}
-            id={expense.id}
-            description={expense.expense[0]}
-            price={expense.expense[1]}
-            editExpense={editExpense}
-            deleteExpense={deleteExpense}
-          />
-        ))}
-      </ScrollView>
-    </View>
+         <ScrollView >
+         {expenses.map(expense => (
+            <ItemList
+               key={expense.id}
+               id={expense.id}
+               description={expense.expense[0]}
+               price={expense.expense[1]}
+               editExpense={editExpense}
+               deleteExpense={deleteExpense}
+            />
+         ))}
+         </ScrollView>
+      </Container>
+      <Footer>
+         <FooterTab style={{backgroundColor:"green"}}>
+            <Button>
+               <Text style={{color:"white"}}>{totalCost}</Text>
+            </Button>
+         </FooterTab>
+      </Footer>
+   </>
   );
 }
 
