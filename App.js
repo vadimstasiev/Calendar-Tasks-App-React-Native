@@ -13,7 +13,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import NotesScreen from './screens/NotesScreen';
+import DayScreen from './screens/DayScreen';
 
 
 
@@ -33,8 +33,8 @@ const App = () => {
           <Stack.Screen name="Register">
             {props => <RegisterScreen {...props} extraData={{}} />}
           </Stack.Screen>
-          <Stack.Screen name="Notes">
-            {props => <NotesScreen {...props} extraData={{}} />}
+          <Stack.Screen name="Day">
+            {props => <DayScreen {...props} extraData={{}} />}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
