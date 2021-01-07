@@ -329,7 +329,7 @@ const DayScreen = ({route, navigation}) => {
  }, []);
 
    // For Main Data
-   const [films, setFilms] = useState([]);
+   const [films, setFilms] = useState([{"userId":1,"id":1,"title":"delectus aut autem","completed":false},{"userId":1,"id":2,"title":"quis ut nam facilis et officia qui","completed":false},{"userId":1,"id":3,"title":"fugiat veniam minus","completed":false},{"userId":1,"id":4,"title":"et porro tempora","completed":true},{"userId":1,"id":5,"title":"laboriosam mollitia et enim quasi adipisci quia provident illum","completed":false},{"userId":1,"id":6,"title":"qui ullam ratione quibusdam voluptatem quia omnis","completed":false},{"userId":1,"id":7,"title":"illo expedita consequatur quia in","completed":false},{"userId":1,"id":8,"title":"quo adipisci enim quam ut ab","completed":true},{"userId":1,"id":9,"title":"molestiae perspiciatis ipsa","completed":false},{"userId":1,"id":10,"title":"illo est ratione doloremque quia maiores aut","completed":true}]);
    // For Filtered Data
    const [filteredFilms, setFilteredFilms] = useState([]);
    // For Selected Data
@@ -436,7 +436,8 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               <Text style={{color:"white", fontWeight: "bold", fontSize:30}}>Day Total: £ { totalCost }</Text>
+               <Text style={{color:"white", fontSize:30}}>Day Total:
+               <Text style={{color:"white", fontWeight: "bold", fontSize:30}}> £ { totalCost }</Text></Text>
             </Button>
          </FooterTab>
       </Footer>
@@ -513,6 +514,21 @@ const styles = StyleSheet.create({
       alignItems: "center",
       backgroundColor: "white",
       padding: 10
+    },
+    descriptionContainer: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    itemText: {
+      fontSize: 15,
+      paddingTop: 5,
+      paddingLeft:10,
+      paddingBottom: 5,
+      margin: 2,
+    },
+    infoText: {
+      textAlign: 'center',
+      fontSize: 16,
     },
 });
 

@@ -226,13 +226,14 @@ const usualExpensesScreen = ({navigation, user}) => {
     <View style={styles.container}>
       <View style={styles.usualExpense}>
         <TextInput
-          placeholder="Add an Usual Expense"
+          placeholder="Add a frequent expense"
           value={title}
           onChangeText={value => setTitle(value)}
           style={styles.textbox}
         />
         <Button title="Add" color="green" onPress={() => addusualExpense()} />
       </View>
+      <Text style={{marginRight:10, marginLeft:12}}>Note: This will add the expense to the expense suggestions bar.</Text>
 
       <ScrollView >
         {usualExpenses.map(usualExpense => (
