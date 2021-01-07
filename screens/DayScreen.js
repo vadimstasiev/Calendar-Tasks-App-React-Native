@@ -1,43 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TextInput, ScrollView, Alert } from "react-native";
-import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Content, ListItem, CheckBox, Icon, Footer, FooterTab} from "native-base";
-import ColorPalette from 'react-native-color-palette';
-
-import auth, { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-// import { NavigationActions, StackActions } from 'react-navigation';
+
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Alert
+} from "react-native";
+import { Container, Header, Content, Card, CardItem,  Body, } from 'native-base';
+import Icon from "react-native-vector-icons/MaterialIcons";
 import LoadingScreen from "./LoadingScreen";
 
+import { firebase } from "@react-native-firebase/auth";
 
-import Svg, {
-  Circle,
-  Ellipse,
-  G,
-  TSpan,
-  TextPath,
-  Path,
-  Text as SvgText,
-  Polygon,
-  Polyline,
-  Line,
-  Rect,
-  Use,
-  Image,
-  Symbol,
-  Defs,
-  LinearGradient,
-  RadialGradient,
-  Stop,
-  ClipPath,
-  Pattern,
-  Mask,
-} from "react-native-svg";
-import { sub } from "react-native-reanimated";
 
 let db = firestore();
 
-
-const ExpenseItem = (props) => {
+const TodoList = (props) => {
    const [isEditing, setIsEditing] = useState('false');
    const [habit, setHabit] = useState(props.habit)
    const editClicked=()=>{
@@ -124,123 +107,155 @@ const ExpenseItem = (props) => {
    );
  }
 
-const DayScreen = ({route, navigation}) => {
+
+const DayScreen = ({navigation, user, monthSvgScreen}) => {
+
+
    const { user, day, month, moods, defaultMood, colorOptions } = route.params;
 
    const [initializing, setInitializing] = useState(true)
 
    const [itemDescription, setItemDescription] = useState('')
 
+   // Initalize empty array to store expenses
    const [expenses, setExpenses] = useState([])
 
-   const submit = (submitMood=mood) => {
-      console.log(user.uid, month, day)
-      db.collection("users").doc(user.uid).collection(month).doc(String(day)).set({
-         message: input,
-         mood: submitMood, 
-         habitsChecked: habitsChecked
-      })
+  const [title, setTitle] = useState("");
+
+
+
+  // function to add habit object in habit list
+  const addExpense = async () => {
+      if (title.length > 0) {
+         // Add habit to the list
+         let sendToFirestoreexpenses = {}
+         let habitMessage=title;
+         // for (let habit in expenses){
+         //    console.log('habit', expenses[habit])
+         //    sendToFirestoreexpenses[expenses[habit].id]=expenses[habit].name;
+         // }
+         // await setExpenses([...expenses, { id: Date.now(), name: title}]);
+         // clear the value of the textfield
+         await db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[Date.now()]:habitMessage})
+         .catch((error) => {
+            db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').set({[Date.now()]:habitMessage})
+            .catch((error) => {
+               console.error("Error adding document: ", error);
+            });
+         });
+         setTitle("");
+      }
+      let temp = {}
+      for (let habit in expenses){
+         console.log('habit', expenses[habit])
+         temp[expenses[habit].id]=expenses[habit].name;
+      }
+
+  };
+
+  const editExpense = (id, habbitUpdate) => {
+      // setSortHabbits([...expenses.filter((habit)=>habit.id!==id), { id: id, name: title}]);
+      // console.log(id, title)
+      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[id]:habbitUpdate})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
-   }
+  }
 
-   const deleteDay = () =>{
-      db.collection("users").doc(user.uid).collection(month).doc(String(day)).update({
-         message:firebase.firestore.FieldValue.delete(),
-         mood: firebase.firestore.FieldValue.delete(), 
-         habitsChecked: firebase.firestore.FieldValue.delete()
-      })
+
+  // function to delete habit from the habit list
+  const deleteExpense = id => {
+      // loop through habit list and return expenses that don't match the id
+      // update the state using setExpenses function
+      // setSortHabbits(expenses.filter(habit => {
+      //    return habit.id !== id;
+      // }));
+      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
-      navigation.goBack();
+  };
 
-   }
+  const setSortHabbits = (inputHabbits) => {
+      // var temp = expenses.slice(0);
+      setExpenses([...inputHabbits.sort((a,b) => {
+         var x = a.id.toLowerCase();
+         var y = b.id.toLowerCase();
+         return x < y ? -1 : x > y ? 1 : 0;
+      })])
+  }
 
-   useEffect(() => {
+  useEffect(() => {
       navigation.setOptions({ title: `${day}` })
-      let unsubscribeDay = () => {};
-      // setInitializing(true);
-      // try {
-      //    unsubscribeDay = db.collection("users").doc(user.uid).collection(month).doc(String(day)).onSnapshot( async querySnapshot=>{
-      //       let data = await querySnapshot.data()
-      //       if (data){
-      //          setFirestoreInput(data.message);
-      //          setInput(firestoreInput)
-      //          setFirestoreMood(data.mood)
-      //          console.log(mood)
-      //          if(mood === defaultMood){
-      //             setMood(data.mood);
-      //          }
-      //          setHabitsChecked(data.habitsChecked || [])
-      //       }
-      //       // await setInitializing(false);
-      //    })
-      // } catch (error) {
-      //    console.log('Firestore error', error);
-      // }
+      let unsubscribe = () => {};
+      setInitializing(true);
+      try {
+         unsubscribe = db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').onSnapshot( async querySnapshot=>{
+            // await setInitializing(true);
+            let data = await querySnapshot.data()
+            let firebaseexpenses = []
+             console.log('data', data)
+            if (data) {
+               for (const id in data) {
+                  const name = data[id];
+                  // console.log('here', id, name)
+                  firebaseexpenses.push({id, name})
+               }
+            // expenses.map((habit) => {
+            //    firebaseexpenses = firebaseexpenses.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            // })
+            let localHabbits;
+            firebaseexpenses.map((habit) => {
+               localHabbits = expenses.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            })
+            console.log(firebaseexpenses)
+            setSortHabbits([...expenses, ...firebaseexpenses]);
+            // await setInitializing(false);
+         }
+         })
+      } catch (error) {
+         console.log('Firestore error', error);
+      }
 
-      let unsubscribeHabbits = () => {};
-      // try {
-      //    unsubscribeHabbits = db.collection("users").doc(user.uid).collection(month).doc('Habits').onSnapshot( async querySnapshot=>{
-      //       let data = await querySnapshot.data();
-      //       let firebaseHabits = [];
-      //       if (data) {
-      //          for (const id in data) {
-      //             const name = data[id];
-      //             firebaseHabits.push({id, name});
-      //          }
-      //       setSortHabbits(firebaseHabits);
-      //       // setInitializing(false);
-      //    }
-      //    })
-      // } catch (error) {
-      //    console.log('Firestore error', error);
-      //    // setInitializing(false);
-      // }
+      setInitializing(false);
 
       const navUnsubscribe = navigation.addListener('submitBeforeGoing', (e) => {
          submit();
       })
-      setInitializing(false);
       return () => {
-         unsubscribeDay();
-         unsubscribeHabbits();
+         unsubscribe();
          navUnsubscribe();
       }
-   }, []);
- 
+ }, []);
 
    if (initializing) return <View style={styles.loadingContainer}>
       <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
    </View>
 
-   return (
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
       <View style={styles.habit}>
-         <TextInput
-            placeholder="Description"
-            value={itemDescription}
-            onChangeText={value => setItemDescription(value)}
-            style={styles.textbox}
-         />
-         <Button title="Add" color="#4050b5" onPress={() => addHabit()} />
+        <TextInput
+          placeholder="Add a Habit"
+          value={title}
+          onChangeText={value => setTitle(value)}
+          style={styles.textbox}
+        />
+        <Button title="Add" color="#4050b5" onPress={() => addExpense()} />
       </View>
 
       <ScrollView >
-         {expenses.map(habit => (
-            <ExpenseItem
-            key={expense.id}
-            habit={expense}
+        {expenses.map(habit => (
+          <TodoList
+            key={habit.id}
+            habit={habit}
             editExpense={editExpense}
             deleteExpense={deleteExpense}
-            />
-         ))}
+          />
+        ))}
       </ScrollView>
-      </View>
-   );
-   
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
