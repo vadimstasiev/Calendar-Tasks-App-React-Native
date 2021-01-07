@@ -302,7 +302,8 @@ const DayScreen = ({route, navigation}) => {
             // })
             let localExpenses;
             firebaseExpenses.map((expense) => {
-               setTotalCost(totalCost+Number(expense[1]))
+               setTotalCost(totalCost+Number(expense.expense[1]))
+               console.log(expense.expense[1])
                localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             })
             console.log('firebase', firebaseExpenses)
@@ -378,7 +379,7 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               <Text style={{color:"white", fontWeight: "bold"}}>Total: { totalCost }</Text>
+               <Text style={{color:"white", fontWeight: "bold", fontSize:30}}>£ { totalCost }</Text>
             </Button>
          </FooterTab>
       </Footer>
