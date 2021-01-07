@@ -378,7 +378,8 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               <Text style={{color:"white"}}>{totalCost}</Text>
+               {/* <Text style={{color:"white", fontWeight: 900}}>Total: </Text> */}
+               <Text style={{color:"white"}}>Total: { totalCost }</Text>
             </Button>
          </FooterTab>
       </Footer>

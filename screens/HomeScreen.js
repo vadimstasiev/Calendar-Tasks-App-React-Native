@@ -63,14 +63,14 @@ const HomeScreen = (props) => {
           </Content>
           <Footer>
             <FooterTab style={{backgroundColor:'green'}}>
-              {/* <Button active={screen==='Calendar'} onPress={(e)=>setScreen('Calendar')}>
-                <Text>Calendar</Text>
-              </Button> */}
-              {/* <Button active={screen==='Graph'} onPress={(e)=>setScreen('Graph')}>
-                <Text>Graph</Text>
-              </Button> */}
+              <Button style={{backgroundColor:(screen==='Calendar'?"#256525":"green")}} onPress={(e)=>setScreen('Calendar')}>
+                <Text style={{color:'white'}}>Calendar</Text>
+              </Button>
+              <Button style={{backgroundColor:(screen==='UsualExpenses'?"#256525":"green")}} onPress={(e)=>setScreen('UsualExpenses')}>
+                <Text style={{color:'white'}}>Usual Expenses</Text>
+              </Button>
               <Button onPress={signOut}>
-                <Text>Sign Out</Text>
+                <Text style={{color:'white'}}>Sign Out</Text>
               </Button>
             </FooterTab>
           </Footer>
