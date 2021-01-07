@@ -299,9 +299,15 @@ const DayScreen = ({route, navigation}) => {
           placeholder="Add an expense"
           value={title}
           onChangeText={value => setTitle(value)}
-          style={styles.textbox}
+          style={styles.textboxDescription}
         />
-        <Button title="Add" color="#4050b5" onPress={() => addExpense()} />
+        <TextInput
+          placeholder="Price"
+          value={title}
+          onChangeText={value => setTitle(value)}
+          style={styles.textboxPrice}
+        />
+        <Button title="Add" color="green" onPress={() => addExpense()} />
       </View>
 
       <ScrollView >
@@ -348,13 +354,28 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center"
    },
-   textbox: {
+   textboxDescription: {
       borderWidth: 1,
-      borderColor: "#4050b5",
+      borderColor: "green",
       borderRadius: 8,
       padding: 10,
+      // paddingRight: 0,
       margin: 10,
-      width: "80%", 
+      marginRight: 0, 
+      marginLeft: 0, 
+      width: "65%", 
+      fontSize:16,
+      height: 39
+   },
+   textboxPrice: {
+      borderWidth: 1,
+      borderColor: "green",
+      borderRadius: 8,
+      padding: 10,
+      // paddingLeft: 3,
+      margin: 10,
+      marginLeft: 5, 
+      width: "17%", 
       fontSize:16,
       height: 39
    },
