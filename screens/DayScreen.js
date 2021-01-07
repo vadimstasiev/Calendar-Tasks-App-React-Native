@@ -11,24 +11,35 @@ import {
   TouchableOpacity,
   Alert
 } from "react-native";
-import { Container, Header, Content, Card, CardItem,  Body, } from 'native-base';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { Container, Header, Content, Card, CardItem,  Body, Right, } from 'native-base';
+import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
+import Spinner from 'react-native-spinkit';
 
 import { firebase } from "@react-native-firebase/auth";
+import { isLoaded } from "expo-font";
 
 
 let db = firestore();
 
 const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
    const [isEditing, setIsEditing] = useState('false');
-   const [expenseDescription, setExpenseMessage] = useState(description);
+   const [expenseDescription, setExpenseDescription] = useState(description);
    const [expensePrice, setExpensePrice] = useState(price)
+   const [isSaving, setIsSaving] = useState(false)
 
 
    const editClicked=()=>{
-      setIsEditing(!isEditing);
-      editExpense(id, expenseDescription, expensePrice);
+      setIsSaving(true);
+      editExpense(id, expenseDescription, expensePrice)
+      .then(()=>{
+         setIsEditing(!isEditing);
+         setIsSaving(false);   
+      })
+      .catch((error) => {
+         console.error("Error editing expense: ", error);
+         setIsSaving(false);
+      });
    }
    return (
      <View style={styles.listTile}>
@@ -45,10 +56,25 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
             </>
             :
             <>
+               <Text style={{}}>Description:</Text>
                <Card style={{width:"100%"}}>
                   <CardItem >
                      <TextInput
-                        style={{ border:0, margin:0, padding:0}} 
+                        style={{ width:"100%", border:0, margin:0, padding:0}} 
+                        defaultValue={String(expenseDescription)}
+                        autoFocus={true}
+                        // onEndEditing={()=>{
+                        //    editClicked()
+                        // }}
+                        onChangeText={value => setExpenseDescription(value)}
+                     />
+                  </CardItem>
+               </Card>
+               <Text style={{}}>Cost:</Text>
+               <Card style={{width:"100%"}}>
+                  <CardItem>
+                     <TextInput
+                        style={{ width:"100%", border:0, margin:0, padding:0}} 
                         defaultValue={String(expensePrice)}
                         autoFocus={true}
                         // onEndEditing={()=>{
@@ -58,26 +84,13 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
                      />
                   </CardItem>
                </Card>
-               <Card style={{width:"100%"}}>
-                  <CardItem>
-                     <TextInput
-                        style={{ border:0, margin:0, padding:0}} 
-                        defaultValue={String(expenseDescription)}
-                        autoFocus={true}
-                        // onEndEditing={()=>{
-                        //    editClicked()
-                        // }}
-                        onChangeText={value => setExpenseMessage(value)}
-                     />
-                  </CardItem>
-               </Card>
                {/* <TextInput
                defaultValue={String(expenseDescription)}
                autoFocus={true}
                // onEndEditing={()=>{
                //    editClicked()
                // }}
-               onChangeText={value => setExpenseMessage(value)}
+               onChangeText={value => setExpenseDescription(value)}
                /> */}
                
             </>
@@ -86,7 +99,7 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
          </CardItem>
       </Card>
       {isEditing?
-         <Card style={{width:"15%"}}>
+         <Card style={{width:"17%"}}>
             <CardItem>
                <Body>
                   <>
@@ -138,13 +151,17 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
          style={styles.button}
          onPress={editClicked}
       >
-         <Icon
+         {isSaving?
+            <Spinner isVisible={true} size={20} type={'Circle'}/>
+         :
+            <Icon
             name={"save"}
             size={20}
             onEndEditing={()=>{
                editClicked()
             }}
-         />
+            />
+         }
          <Text>Save</Text>
       </TouchableOpacity>
       }
@@ -203,10 +220,7 @@ const DayScreen = ({route, navigation}) => {
   const editExpense = (id, newDescription, newPrice) => {
       // setSortExpenses([...expenses.filter((expense)=>expense.id!==id), { id: id, name: title}]);
       // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
-      .catch((error) => {
-         console.error("Error editing expense: ", error);
-      });
+      return db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
   }
 
 
