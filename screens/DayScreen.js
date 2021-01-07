@@ -20,7 +20,7 @@ import { firebase } from "@react-native-firebase/auth";
 
 let db = firestore();
 
-const TodoList = (props) => {
+const ItemList = (props) => {
    const [isEditing, setIsEditing] = useState('false');
    const [habit, setHabit] = useState(props.habit)
    const editClicked=()=>{
@@ -129,18 +129,19 @@ const DayScreen = ({route, navigation}) => {
       if (title.length > 0) {
          // Add habit to the list
          let sendToFirestoreexpenses = {}
-         let habitMessage=title;
+         let description=title;
+         let price=2.96;
          // for (let habit in expenses){
          //    console.log('habit', expenses[habit])
          //    sendToFirestoreexpenses[expenses[habit].id]=expenses[habit].name;
          // }
          // await setExpenses([...expenses, { id: Date.now(), name: title}]);
          // clear the value of the textfield
-         await db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[Date.now()]:habitMessage})
+         await db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[Date.now()]:[description, price]})
          .catch((error) => {
-            db.collection("users").doc(user.uid).collection(month).doc('expenses').set({[Date.now()]:habitMessage})
+            db.collection("users").doc(user.uid).collection(month).doc('expenses').set({[Date.now()]:[description, price]})
             .catch((error) => {
-               console.error("Error adding document: ", error);
+               console.error("Error adding expense: ", error);
             });
          });
          setTitle("");
@@ -153,12 +154,12 @@ const DayScreen = ({route, navigation}) => {
 
   };
 
-  const editExpense = (id, habbitUpdate) => {
-      // setSortHabbits([...expenses.filter((habit)=>habit.id!==id), { id: id, name: title}]);
+  const editExpense = (id, newDescription, newPrice) => {
+      // setSortExpenses([...expenses.filter((habit)=>habit.id!==id), { id: id, name: title}]);
       // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:habbitUpdate})
+      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
       .catch((error) => {
-         console.error("Error adding document: ", error);
+         console.error("Error editing expense: ", error);
       });
   }
 
@@ -167,18 +168,17 @@ const DayScreen = ({route, navigation}) => {
   const deleteExpense = id => {
       // loop through habit list and return expenses that don't match the id
       // update the state using setExpenses function
-      // setSortHabbits(expenses.filter(habit => {
+      // setSortExpenses(expenses.filter(habit => {
       //    return habit.id !== id;
       // }));
       db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
-         console.error("Error adding document: ", error);
+         console.error("Error deleting expense: ", error);
       });
   };
 
-  const setSortHabbits = (inputHabbits) => {
-      // var temp = expenses.slice(0);
-      setExpenses([...inputHabbits.sort((a,b) => {
+  const setSortExpenses = (inputList) => {
+      setExpenses([...inputList.sort((a,b) => {
          var x = a.id.toLowerCase();
          var y = b.id.toLowerCase();
          return x < y ? -1 : x > y ? 1 : 0;
@@ -209,7 +209,7 @@ const DayScreen = ({route, navigation}) => {
                localHabbits = expenses.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
             })
             console.log(firebaseexpenses)
-            setSortHabbits([...expenses, ...firebaseexpenses]);
+            setSortExpenses([...expenses, ...firebaseexpenses]);
             // await setInitializing(false);
          }
          })
@@ -219,7 +219,7 @@ const DayScreen = ({route, navigation}) => {
 
       setInitializing(false);
 
-      const navUnsubscribe = navigation.addListener('submitBeforeGoing', (e) => {
+      const navUnsubscribe = navigation.addListener('onLeaving', (e) => {
          submit();
       })
       return () => {
@@ -246,7 +246,7 @@ const DayScreen = ({route, navigation}) => {
 
       <ScrollView >
         {expenses.map(habit => (
-          <TodoList
+          <ItemList
             key={habit.id}
             habit={habit}
             editExpense={editExpense}
