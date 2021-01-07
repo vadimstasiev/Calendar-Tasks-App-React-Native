@@ -302,6 +302,7 @@ const DayScreen = ({route, navigation}) => {
             // })
             let localExpenses;
             firebaseExpenses.map((expense) => {
+               setTotalCost(totalCost+Number(expense[1]))
                localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             })
             console.log('firebase', firebaseExpenses)
