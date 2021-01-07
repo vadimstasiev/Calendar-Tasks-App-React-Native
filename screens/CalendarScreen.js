@@ -71,7 +71,7 @@ const CalendarsScreen = ({navigation, user}) => {
   const dayPress = (dayData) => {
     console.log(dayData)
     const {day, month} = dayData;
-    navigation.navigate('Day', {user, day, month, moods, defaultMood, colorOptions})
+    navigation.navigate('Day', {user, day: String(day), month: String(month), moods, defaultMood, colorOptions})
   }
   
   const renderCalendarWithPeriodMarkingAndDotMarking = () => {

@@ -108,7 +108,7 @@ const TodoList = (props) => {
  }
 
 
-const DayScreen = ({navigation, user, monthSvgScreen}) => {
+const DayScreen = ({route, navigation}) => {
 
 
    const { user, day, month, moods, defaultMood, colorOptions } = route.params;
@@ -136,9 +136,9 @@ const DayScreen = ({navigation, user, monthSvgScreen}) => {
          // }
          // await setExpenses([...expenses, { id: Date.now(), name: title}]);
          // clear the value of the textfield
-         await db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[Date.now()]:habitMessage})
+         await db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[Date.now()]:habitMessage})
          .catch((error) => {
-            db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').set({[Date.now()]:habitMessage})
+            db.collection("users").doc(user.uid).collection(month).doc('expenses').set({[Date.now()]:habitMessage})
             .catch((error) => {
                console.error("Error adding document: ", error);
             });
@@ -156,7 +156,7 @@ const DayScreen = ({navigation, user, monthSvgScreen}) => {
   const editExpense = (id, habbitUpdate) => {
       // setSortHabbits([...expenses.filter((habit)=>habit.id!==id), { id: id, name: title}]);
       // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[id]:habbitUpdate})
+      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:habbitUpdate})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
@@ -170,7 +170,7 @@ const DayScreen = ({navigation, user, monthSvgScreen}) => {
       // setSortHabbits(expenses.filter(habit => {
       //    return habit.id !== id;
       // }));
-      db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
+      db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
@@ -190,7 +190,7 @@ const DayScreen = ({navigation, user, monthSvgScreen}) => {
       let unsubscribe = () => {};
       setInitializing(true);
       try {
-         unsubscribe = db.collection("users").doc(user.uid).collection(monthSvgScreen).doc('expenses').onSnapshot( async querySnapshot=>{
+         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('expenses').onSnapshot( async querySnapshot=>{
             // await setInitializing(true);
             let data = await querySnapshot.data()
             let firebaseexpenses = []
