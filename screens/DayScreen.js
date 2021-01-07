@@ -19,6 +19,8 @@ import Spinner from 'react-native-spinkit';
 import CurrencyInput from 'react-native-currency-input';
 import { FakeCurrencyInput } from 'react-native-currency-input';
 
+import Autocomplete from 'react-native-autocomplete-input';
+
 import { firebase } from "@react-native-firebase/auth";
 import { isLoaded } from "expo-font";
 
@@ -326,6 +328,29 @@ const DayScreen = ({route, navigation}) => {
       }
  }, []);
 
+   // For Main Data
+   const [films, setFilms] = useState([]);
+   // For Filtered Data
+   const [filteredFilms, setFilteredFilms] = useState([]);
+   // For Selected Data
+   const [selectedValue, setSelectedValue] = useState({});
+   
+
+   const findFilm = (query) => {
+      // Method called every time when we change the value of the input
+      if (query) {
+      // Making a case insensitive regular expression
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      // Setting the filtered film array according the query
+      setFilteredFilms(
+            films.filter((film) => film.title.search(regex) >= 0)
+      );
+      } else {
+      // If the query is null then return blank
+      setFilteredFilms([]);
+      }
+   };
+
    if (initializing) return <View style={styles.loadingContainer}>
       <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
    </View>
@@ -334,12 +359,44 @@ const DayScreen = ({route, navigation}) => {
    <>
       <Container style={styles.container}>
          <View style={styles.expense}>
-         <TextInput
+         {/* <TextInput
             placeholder="Add an expense"
             value={titleDescription}
             onChangeText={value => setTitleDescription(value)}
             style={styles.textboxDescription}
-         />
+         /> */}
+         <Autocomplete
+          autoCapitalize="none"
+          autoCorrect={false}
+         //  containerStyle={styles.textboxDescription}
+          inputContainerStyle={styles.textboxDescription}
+         //  inputContainerStyle={{border: 0, margin:0, paddingRight:0}}
+          // Data to show in suggestion
+          data={filteredFilms}
+          // Default value if you want to set something in input
+          defaultValue={
+            JSON.stringify(selectedValue) === '{}' ?
+            '' :
+            selectedValue.title
+          }
+          // Onchange of the text changing the state of the query
+          // Which will trigger the findFilm method
+          // To show the suggestions
+          onChangeText={(text) => findFilm(text)}
+          placeholder="Add an expense"
+          renderItem={({item}) => (
+            // For the suggestion view
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedValue(item);
+                setFilteredFilms([]);
+              }}>
+              <Text style={styles.itemText}>
+                  {item.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
          {/* <TextInput
             placeholder="Price"
             value={titlePrice}
@@ -379,7 +436,7 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               <Text style={{color:"white", fontWeight: "bold", fontSize:30}}>£ { totalCost }</Text>
+               <Text style={{color:"white", fontWeight: "bold", fontSize:30}}>Day Total: £ { totalCost }</Text>
             </Button>
          </FooterTab>
       </Footer>
@@ -419,14 +476,14 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: "green",
       borderRadius: 8,
-      padding: 10,
+      padding: 4,
       // paddingRight: 0,
-      margin: 10,
+      margin: 4,
       marginRight: 0, 
-      marginLeft: 0, 
-      width: "58%", 
+      marginLeft: 10, 
+      width: "90%", 
       fontSize:16,
-      height: 39
+      // height: 39
    },
    textboxPrice: {
       borderWidth: 1,
@@ -436,9 +493,10 @@ const styles = StyleSheet.create({
       // paddingLeft: 3,
       margin: 10,
       marginLeft: 5, 
+      marginTop: 14, 
       width: "25%", 
       fontSize:16,
-      height: 39
+      height: 50
    },
    listTile: {
       width: "100%",
