@@ -183,22 +183,22 @@ const DayScreen = ({route, navigation}) => {
    // Initalize empty array to store expenses
    const [expenses, setExpenses] = useState([])
 
-  const [title, setTitle] = useState("");
+   const [titleDescription, setTitleDescription] = useState("");
 
-
+   const [titlePrice, setTitlePrice] = useState("")
 
   // function to add expense object in expense list
   const addExpense = async () => {
-      if (title.length > 0) {
+      if (titleDescription.length > 0) {
          // Add expense to the list
          let sendToFirestoreexpenses = {}
-         let description=title;
-         let price=2.96;
+         let description=titleDescription;
+         let price=titlePrice;
          // for (let expense in expenses){
          //    console.log('expense', expenses[expense])
          //    sendToFirestoreexpenses[expenses[expense].id]=expenses[expense].name;
          // }
-         // await setExpenses([...expenses, { id: Date.now(), name: title}]);
+         // await setExpenses([...expenses, { id: Date.now(), name: titleDescription}]);
          // clear the value of the textfield
          await db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[Date.now()]:[description, price]})
          .catch((error) => {
@@ -207,19 +207,19 @@ const DayScreen = ({route, navigation}) => {
                console.error("Error adding expense: ", error);
             });
          });
-         setTitle("");
+         setTitleDescription("");
       }
-      let temp = {}
-      for (let expense in expenses){
-         console.log('expense', expenses[expense])
-         temp[expenses[expense].id]=expenses[expense].name;
-      }
+      // let temp = {}
+      // for (let expense in expenses){
+      //    console.log('expense', expenses[expense])
+      //    temp[expenses[expense].id]=expenses[expense].name;
+      // }
 
   };
 
   const editExpense = (id, newDescription, newPrice) => {
-      // setSortExpenses([...expenses.filter((expense)=>expense.id!==id), { id: id, name: title}]);
-      // console.log(id, title)
+      // setSortExpenses([...expenses.filter((expense)=>expense.id!==id), { id: id, name: titleDescription}]);
+      // console.log(id, titleDescription)
       return db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
   }
 
@@ -253,23 +253,23 @@ const DayScreen = ({route, navigation}) => {
          unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('expenses').onSnapshot( async querySnapshot=>{
             // await setInitializing(true);
             let data = await querySnapshot.data()
-            let firebaseexpenses = []
+            let firebaseExpenses = []
              console.log('data', data)
             if (data) {
                for (const id in data) {
-                  const name = data[id];
+                  const expense = data[id];
                   // console.log('here', id, name)
-                  firebaseexpenses.push({id, name})
+                  firebaseExpenses.push({id, expense})
                }
             // expenses.map((expense) => {
-            //    firebaseexpenses = firebaseexpenses.filter((firebaseexpense) => firebaseexpense.id!==expense.id)
+            //    firebaseExpenses = firebaseExpenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             // })
-            let localHabbits;
-            firebaseexpenses.map((expense) => {
-               localHabbits = expenses.filter((firebaseexpense) => firebaseexpense.id!==expense.id)
+            let localExpenses;
+            firebaseExpenses.map((expense) => {
+               localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             })
-            console.log(firebaseexpenses)
-            setSortExpenses([...expenses, ...firebaseexpenses]);
+            console.log(firebaseExpenses)
+            setSortExpenses([...expenses, ...firebaseExpenses]);
             // await setInitializing(false);
          }
          })
@@ -297,14 +297,14 @@ const DayScreen = ({route, navigation}) => {
       <View style={styles.expense}>
         <TextInput
           placeholder="Add an expense"
-          value={title}
-          onChangeText={value => setTitle(value)}
+          value={titleDescription}
+          onChangeText={value => setTitleDescription(value)}
           style={styles.textboxDescription}
         />
         <TextInput
           placeholder="Price"
-          value={title}
-          onChangeText={value => setTitle(value)}
+          value={titlePrice}
+          onChangeText={value => setTitlePrice(value)}
           style={styles.textboxPrice}
         />
         <Button title="Add" color="green" onPress={() => addExpense()} />
