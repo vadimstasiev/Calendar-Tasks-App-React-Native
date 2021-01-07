@@ -45,44 +45,61 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
             </>
             :
             <>
-               <TextInput
+               <Card style={{width:"100%"}}>
+                  <CardItem >
+                     <TextInput
+                        style={{ border:0, margin:0, padding:0}} 
+                        defaultValue={String(expensePrice)}
+                        autoFocus={true}
+                        // onEndEditing={()=>{
+                        //    editClicked()
+                        // }}
+                        onChangeText={value => setExpensePrice(value)}
+                     />
+                  </CardItem>
+               </Card>
+               <Card style={{width:"100%"}}>
+                  <CardItem>
+                     <TextInput
+                        style={{ border:0, margin:0, padding:0}} 
+                        defaultValue={String(expenseDescription)}
+                        autoFocus={true}
+                        // onEndEditing={()=>{
+                        //    editClicked()
+                        // }}
+                        onChangeText={value => setExpenseMessage(value)}
+                     />
+                  </CardItem>
+               </Card>
+               {/* <TextInput
                defaultValue={String(expenseDescription)}
                autoFocus={true}
                // onEndEditing={()=>{
                //    editClicked()
                // }}
                onChangeText={value => setExpenseMessage(value)}
-               />
+               /> */}
+               
             </>
             }
             </Body>
          </CardItem>
       </Card>
-      <Card style={{width:"15%"}}>
-         <CardItem>
-            <Body>
-               {isEditing?
-               <>
-                  <Text>
-                  {expensePrice}
-                  {'     '}
-                  </Text>
-               </>
-               :
-               <>
-                  <TextInput
-                  defaultValue={String(expensePrice)}
-                  autoFocus={true}
-                  // onEndEditing={()=>{
-                  //    editClicked()
-                  // }}
-                  onChangeText={value => setExpensePrice(value)}
-                  />
-               </>
-               }
-            </Body>
-         </CardItem>
-      </Card>
+      {isEditing?
+         <Card style={{width:"15%"}}>
+            <CardItem>
+               <Body>
+                  <>
+                     <Text>
+                     {expensePrice}
+                     {'     '}
+                     </Text>
+                  </>
+               </Body>
+            </CardItem>
+         </Card>
+         :<></>
+      }
       {isEditing?
       <>
       <TouchableOpacity
@@ -118,18 +135,19 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
       </>
       :
       <TouchableOpacity
-      style={styles.button}
-      onPress={editClicked}
+         style={styles.button}
+         onPress={editClicked}
       >
-        <Icon
-            name={"edit"}
+         <Icon
+            name={"save"}
             size={20}
-            color="green"
             onEndEditing={()=>{
                editClicked()
             }}
-            />
-      </TouchableOpacity>}
+         />
+         <Text>Save</Text>
+      </TouchableOpacity>
+      }
       
      </View>
    );
@@ -264,7 +282,7 @@ const DayScreen = ({route, navigation}) => {
     <View style={styles.container}>
       <View style={styles.expense}>
         <TextInput
-          placeholder="Add a expense"
+          placeholder="Add an expense"
           value={title}
           onChangeText={value => setTitle(value)}
           style={styles.textbox}
