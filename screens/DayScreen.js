@@ -268,7 +268,7 @@ const DayScreen = ({route, navigation}) => {
             firebaseExpenses.map((expense) => {
                localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             })
-            console.log(firebaseExpenses)
+            console.log('firebase', firebaseExpenses)
             setSortExpenses([...expenses, ...firebaseExpenses]);
             // await setInitializing(false);
          }
@@ -315,8 +315,8 @@ const DayScreen = ({route, navigation}) => {
           <ItemList
             key={expense.id}
             id={expense.id}
-            description={expense.description}
-            price={expense.price}
+            description={expense.expense[0]}
+            price={expense.expense[1]}
             editExpense={editExpense}
             deleteExpense={deleteExpense}
           />
