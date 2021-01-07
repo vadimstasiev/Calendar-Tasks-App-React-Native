@@ -208,6 +208,7 @@ const DayScreen = ({route, navigation}) => {
             });
          });
          setTitleDescription("");
+         setTitlePrice("");
       }
       // let temp = {}
       // for (let expense in expenses){
