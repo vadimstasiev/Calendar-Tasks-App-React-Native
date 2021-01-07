@@ -20,63 +20,91 @@ import { firebase } from "@react-native-firebase/auth";
 
 let db = firestore();
 
-const ItemList = (props) => {
+const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
    const [isEditing, setIsEditing] = useState('false');
-   const [habit, setHabit] = useState(props.habit)
+   const [expenseDescription, setExpenseMessage] = useState(description);
+   const [expensePrice, setExpensePrice] = useState(price)
+
+
    const editClicked=()=>{
       setIsEditing(!isEditing);
-      // console.log('update', props.habit.id, habit.name)
-      props.editExpense(props.habit.id, habit.name);
+      editExpense(id, expenseDescription, expensePrice);
    }
    return (
      <View style={styles.listTile}>
-      {/* <Text style={styles.title}>{props.habit.name}</Text> */}
-      {isEditing?
-         <Icon
-            name="delete"
-            size={20}
-            color="red"
-            // onPress={() => props.deleteExpense(props.habit.id)}
-            onPress={() => Alert.alert(
-               "Delete",
-               "Are you sure you want to delete?",
-               [
-                 {
-                   text: "Cancel",
-                   style: "cancel"
-                 },
-                 { text: "OK", onPress: () => props.deleteExpense(props.habit.id) }
-               ],
-               { cancelable: true }
-             )}
-         />
-      :  
-         <></>
-      }
-      <Card style={isEditing?{width: "72%"}:{width: "85%"}}>
+      
+      <Card style={isEditing?{width: "62%"}:{width: "85%"}}>
          <CardItem>
             <Body>
             {isEditing?
-               <Text >
-               {props.habit.name}
+            <>
+               <Text>
+               {expenseDescription}
                {'     '}
                </Text>
+            </>
             :
             <>
                <TextInput
-               defaultValue={String(props.habit.name)}
+               defaultValue={String(expenseDescription)}
                autoFocus={true}
-               onEndEditing={()=>{
-                  editClicked()
-               }}
-               onChangeText={value => setHabit({...habit, name: value})}
+               // onEndEditing={()=>{
+               //    editClicked()
+               // }}
+               onChangeText={value => setExpenseMessage(value)}
                />
             </>
             }
             </Body>
          </CardItem>
       </Card>
+      <Card style={{width:"15%"}}>
+         <CardItem>
+            <Body>
+               {isEditing?
+               <>
+                  <Text>
+                  {expensePrice}
+                  {'     '}
+                  </Text>
+               </>
+               :
+               <>
+                  <TextInput
+                  defaultValue={String(expensePrice)}
+                  autoFocus={true}
+                  // onEndEditing={()=>{
+                  //    editClicked()
+                  // }}
+                  onChangeText={value => setExpensePrice(value)}
+                  />
+               </>
+               }
+            </Body>
+         </CardItem>
+      </Card>
       {isEditing?
+      <>
+      <TouchableOpacity
+      style={styles.button}
+      onPress={() => Alert.alert(
+         "Delete",
+         "Are you sure you want to delete?",
+         [
+            {
+               text: "Cancel",
+               style: "cancel"
+            },
+            { text: "OK", onPress: () => deleteExpense(id) }
+         ],
+         { cancelable: true }
+         )}
+      >
+         <Icon
+            name="delete"
+            size={20}
+         />
+      </TouchableOpacity>
       <TouchableOpacity
       style={styles.button}
       onPress={editClicked}
@@ -85,16 +113,16 @@ const ItemList = (props) => {
             name={"edit"}
             size={20}
             color="#666666"
-            // onPress={() => props.checkHabit(props.habit.id)}
             />
       </TouchableOpacity>
+      </>
       :
       <TouchableOpacity
       style={styles.button}
       onPress={editClicked}
       >
         <Icon
-            name={"check"}
+            name={"edit"}
             size={20}
             color="green"
             onEndEditing={()=>{
@@ -124,16 +152,16 @@ const DayScreen = ({route, navigation}) => {
 
 
 
-  // function to add habit object in habit list
+  // function to add expense object in expense list
   const addExpense = async () => {
       if (title.length > 0) {
-         // Add habit to the list
+         // Add expense to the list
          let sendToFirestoreexpenses = {}
          let description=title;
          let price=2.96;
-         // for (let habit in expenses){
-         //    console.log('habit', expenses[habit])
-         //    sendToFirestoreexpenses[expenses[habit].id]=expenses[habit].name;
+         // for (let expense in expenses){
+         //    console.log('expense', expenses[expense])
+         //    sendToFirestoreexpenses[expenses[expense].id]=expenses[expense].name;
          // }
          // await setExpenses([...expenses, { id: Date.now(), name: title}]);
          // clear the value of the textfield
@@ -147,15 +175,15 @@ const DayScreen = ({route, navigation}) => {
          setTitle("");
       }
       let temp = {}
-      for (let habit in expenses){
-         console.log('habit', expenses[habit])
-         temp[expenses[habit].id]=expenses[habit].name;
+      for (let expense in expenses){
+         console.log('expense', expenses[expense])
+         temp[expenses[expense].id]=expenses[expense].name;
       }
 
   };
 
   const editExpense = (id, newDescription, newPrice) => {
-      // setSortExpenses([...expenses.filter((habit)=>habit.id!==id), { id: id, name: title}]);
+      // setSortExpenses([...expenses.filter((expense)=>expense.id!==id), { id: id, name: title}]);
       // console.log(id, title)
       db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:[newDescription, newPrice]})
       .catch((error) => {
@@ -164,12 +192,12 @@ const DayScreen = ({route, navigation}) => {
   }
 
 
-  // function to delete habit from the habit list
+  // function to delete expense from the expense list
   const deleteExpense = id => {
-      // loop through habit list and return expenses that don't match the id
+      // loop through expense list and return expenses that don't match the id
       // update the state using setExpenses function
-      // setSortExpenses(expenses.filter(habit => {
-      //    return habit.id !== id;
+      // setSortExpenses(expenses.filter(expense => {
+      //    return expense.id !== id;
       // }));
       db.collection("users").doc(user.uid).collection(month).doc('expenses').update({[id]:firebase.firestore.FieldValue.delete()})
       .catch((error) => {
@@ -201,12 +229,12 @@ const DayScreen = ({route, navigation}) => {
                   // console.log('here', id, name)
                   firebaseexpenses.push({id, name})
                }
-            // expenses.map((habit) => {
-            //    firebaseexpenses = firebaseexpenses.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            // expenses.map((expense) => {
+            //    firebaseexpenses = firebaseexpenses.filter((firebaseexpense) => firebaseexpense.id!==expense.id)
             // })
             let localHabbits;
-            firebaseexpenses.map((habit) => {
-               localHabbits = expenses.filter((firebaseHabit) => firebaseHabit.id!==habit.id)
+            firebaseexpenses.map((expense) => {
+               localHabbits = expenses.filter((firebaseexpense) => firebaseexpense.id!==expense.id)
             })
             console.log(firebaseexpenses)
             setSortExpenses([...expenses, ...firebaseexpenses]);
@@ -234,9 +262,9 @@ const DayScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.habit}>
+      <View style={styles.expense}>
         <TextInput
-          placeholder="Add a Habit"
+          placeholder="Add a expense"
           value={title}
           onChangeText={value => setTitle(value)}
           style={styles.textbox}
@@ -245,10 +273,12 @@ const DayScreen = ({route, navigation}) => {
       </View>
 
       <ScrollView >
-        {expenses.map(habit => (
+        {expenses.map(expense => (
           <ItemList
-            key={habit.id}
-            habit={habit}
+            key={expense.id}
+            id={expense.id}
+            description={expense.description}
+            price={expense.price}
             editExpense={editExpense}
             deleteExpense={deleteExpense}
           />
@@ -280,7 +310,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "flex-start"
    },
-   habit: {
+   expense: {
       flexDirection: "row",
       width: "100%",
       justifyContent: "center",

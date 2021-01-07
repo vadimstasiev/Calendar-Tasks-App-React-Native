@@ -85,6 +85,7 @@ const CalendarsScreen = ({navigation, user}) => {
             onDayPress={dayPress}
             markingType={'period'}
             markedDates={{
+            [getCurrentDate()]: {marked: true, dotColor: '#50cebb'}, 
             '2021-05-14': {marked: true, dotColor: '#50cebb'},
             '2021-05-15': {marked: true, dotColor: 'red'},
             '2021-01-16': {marked: true, dotColor: '#50cebb'},
