@@ -12,7 +12,7 @@ import {
   Alert
 } from "react-native";
 import { Container, Header, Content, Card, CardItem,  Body, } from 'native-base';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
 
 import { firebase } from "@react-native-firebase/auth";
@@ -21,7 +21,6 @@ import { firebase } from "@react-native-firebase/auth";
 let db = firestore();
 
 const ItemList = (props) => {
-   const month = new Date().getMonth() + 1;
    const [isEditing, setIsEditing] = useState('false');
    const [usualExpense, setusualExpense] = useState(props.usualExpense)
    const editClicked=()=>{
@@ -30,27 +29,6 @@ const ItemList = (props) => {
    }
    return (
      <View style={styles.listTile}>
-      {isEditing?
-         <Icon
-            name="delete"
-            size={20}
-            color="red"
-            onPress={() => Alert.alert(
-               "Delete",
-               "Are you sure you want to delete?",
-               [
-                 {
-                   text: "Cancel",
-                   style: "cancel"
-                 },
-                 { text: "OK", onPress: () => props.deleteusualExpense(props.usualExpense.id) }
-               ],
-               { cancelable: true }
-             )}
-         />
-      :  
-         <></>
-      }
       <Card style={isEditing?{width: "72%"}:{width: "85%"}}>
          <CardItem>
             <Body>
@@ -75,17 +53,40 @@ const ItemList = (props) => {
          </CardItem>
       </Card>
       {isEditing?
-      <TouchableOpacity
-      style={styles.button}
-      onPress={editClicked}
-      >
-        <Icon
-            name={"edit"}
-            size={20}
-            color="#666666"
-            // onPress={() => props.checkusualExpense(props.usualExpense.id)}
+      <>
+         <TouchableOpacity
+         style={styles.button}
+         onPress={editClicked}
+         >
+         <Icon
+               name={"edit"}
+               size={20}
+               color="#666666"
+               // onPress={() => props.checkusualExpense(props.usualExpense.id)}
+               />
+         </TouchableOpacity>
+         <TouchableOpacity
+            style={styles.button}
+            onPress={() => Alert.alert(
+               "Delete",
+               "Are you sure you want to delete?",
+               [
+               {
+                  text: "Cancel",
+                  style: "cancel"
+               },
+               { text: "OK", onPress: () => props.deleteusualExpense(props.usualExpense.id) }
+               ],
+               { cancelable: true }
+            )}
+         >
+            <Icon
+               name="delete"
+               size={20}
+               color="red"
             />
-      </TouchableOpacity>
+         </TouchableOpacity>
+      </>
       :
       <TouchableOpacity
       style={styles.button}
@@ -106,9 +107,11 @@ const ItemList = (props) => {
  }
 
 
-const usualExpensesScreen = ({navigation, user, month}) => {
+const usualExpensesScreen = ({navigation, user}) => {
 
-   navigation.setOptions({ title: `usualExpenses` })
+   const month = String(new Date().getMonth() + 1);
+
+   navigation.setOptions({ title: `Usual Expenses` })
 
   const [title, setTitle] = useState("");
 
@@ -124,12 +127,6 @@ const usualExpensesScreen = ({navigation, user, month}) => {
          // Add usualExpense to the list
          let sendToFirestoreusualExpenses = {}
          let usualExpenseMessage=title;
-         // for (let usualExpense in usualExpenses){
-         //    console.log('usualExpense', usualExpenses[usualExpense])
-         //    sendToFirestoreusualExpenses[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].name;
-         // }
-         // await setusualExpenses([...usualExpenses, { id: Date.now(), name: title}]);
-         // clear the value of the textfield
          await db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[Date.now()]:usualExpenseMessage})
          .catch((error) => {
             db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').set({[Date.now()]:usualExpenseMessage})
@@ -229,7 +226,7 @@ const usualExpensesScreen = ({navigation, user, month}) => {
     <View style={styles.container}>
       <View style={styles.usualExpense}>
         <TextInput
-          placeholder="Add a usualExpense"
+          placeholder="Add an Usual Expense"
           value={title}
           onChangeText={value => setTitle(value)}
           style={styles.textbox}
