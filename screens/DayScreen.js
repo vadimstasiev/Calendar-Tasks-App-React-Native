@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firestore from "@react-native-firebase/firestore";
 
+
 import {
   StyleSheet,
   Text,
@@ -12,6 +13,7 @@ import {
   Alert
 } from "react-native";
 import { Container, Header, Content, Card, CardItem, Button, Body, Right, Footer, FooterTab } from 'native-base';
+// import Modal from 'modal-react-native-web';
 import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
 import Spinner from 'react-native-spinkit';
@@ -359,16 +361,13 @@ const DayScreen = ({route, navigation}) => {
    <>
       <Container style={styles.container}>
          <View style={styles.expense}>
-         {/* <TextInput
-            placeholder="Add an expense"
-            value={titleDescription}
-            onChangeText={value => setTitleDescription(value)}
-            style={styles.textboxDescription}
-         /> */}
+         <View
+            style={{width:"55%"}}
+         />
          <Autocomplete
           autoCapitalize="none"
           autoCorrect={false}
-         //  containerStyle={styles.textboxDescription}
+          containerStyle={styles.autocompleteContainer}
           inputContainerStyle={styles.textboxDescription}
          //  inputContainerStyle={{border: 0, margin:0, paddingRight:0}}
           // Data to show in suggestion
@@ -487,6 +486,7 @@ const styles = StyleSheet.create({
       // height: 39
    },
    textboxPrice: {
+      // alignSelf:"flex-end",
       borderWidth: 1,
       borderColor: "green",
       borderRadius: 8,
@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
       // paddingLeft: 3,
       margin: 10,
       marginLeft: 5, 
-      marginTop: 14, 
+      marginTop: 4, 
       width: "25%", 
       fontSize:16,
       height: 50
@@ -514,6 +514,16 @@ const styles = StyleSheet.create({
       alignItems: "center",
       backgroundColor: "white",
       padding: 10
+    },
+    autocompleteContainer: {
+      flex: 1,
+      left: 0,
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      zIndex: 1, 
+      width: "60%",
+      
     },
     descriptionContainer: {
       flex: 1,
