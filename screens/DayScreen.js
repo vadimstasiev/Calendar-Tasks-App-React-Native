@@ -383,6 +383,8 @@ const DayScreen = ({route, navigation}) => {
       <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
    </View>
 
+   console.log('usualExpenses', usualExpenses)
+
   return (
    <>
       <Container style={styles.container}>
@@ -461,7 +463,7 @@ const DayScreen = ({route, navigation}) => {
       <Footer>
          <FooterTab style={{backgroundColor:"green"}}>
             <Button>
-               <Text style={{color:"white", fontSize:30}}>Day Total:
+               <Text style={{color:"white", fontSize:20}}>Total:
                <Text style={{color:"white", fontWeight: "bold", fontSize:30}}> £ { totalCost }</Text></Text>
             </Button>
          </FooterTab>
