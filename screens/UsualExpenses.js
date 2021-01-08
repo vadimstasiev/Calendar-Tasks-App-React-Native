@@ -93,7 +93,7 @@ const ItemList = (props) => {
       onPress={editClicked}
       >
         <Icon
-            name={"check"}
+            name={"edit"}
             size={20}
             color="green"
             onEndEditing={()=>{
@@ -117,7 +117,7 @@ const usualExpensesScreen = ({navigation, user}) => {
 
 
   // Initalize empty array to store usualExpenses
-  const [usualExpenses, setusualExpenses] = useState([]);
+  const [usualExpenses, setUsualExpenses] = useState([]);
 
   const [initializing, setInitializing] = useState(true)
 
@@ -144,10 +144,10 @@ const usualExpensesScreen = ({navigation, user}) => {
 
   };
 
-  const editusualExpense = (id, habbitUpdate) => {
-      // setSortHabbits([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, name: title}]);
+  const editusualExpense = (id, expenseUpdate) => {
+      // setSortExpenses([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, name: title}]);
       // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:habbitUpdate})
+      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:expenseUpdate})
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
@@ -157,8 +157,8 @@ const usualExpensesScreen = ({navigation, user}) => {
   // function to delete usualExpense from the usualExpense list
   const deleteusualExpense = id => {
       // loop through usualExpense list and return usualExpenses that don't match the id
-      // update the state using setusualExpenses function
-      // setSortHabbits(usualExpenses.filter(usualExpense => {
+      // update the state using setUsualExpenses function
+      // setSortExpenses(usualExpenses.filter(usualExpense => {
       //    return usualExpense.id !== id;
       // }));
       db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:firebase.firestore.FieldValue.delete()})
@@ -167,9 +167,9 @@ const usualExpensesScreen = ({navigation, user}) => {
       });
   };
 
-  const setSortHabbits = (inputHabbits) => {
+  const setSortExpenses = (inputExpenses) => {
       // var temp = usualExpenses.slice(0);
-      setusualExpenses([...inputHabbits.sort((a,b) => {
+      setUsualExpenses([...inputExpenses.sort((a,b) => {
          var x = a.id.toLowerCase();
          var y = b.id.toLowerCase();
          return x < y ? -1 : x > y ? 1 : 0;
@@ -181,26 +181,20 @@ const usualExpensesScreen = ({navigation, user}) => {
       setInitializing(true);
       try {
          unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
-            // await setInitializing(true);
             let data = await querySnapshot.data()
             let firebaseusualExpenses = []
              console.log('data', data)
             if (data) {
                for (const id in data) {
                   const name = data[id];
-                  // console.log('here', id, name)
                   firebaseusualExpenses.push({id, name})
                }
-            // usualExpenses.map((usualExpense) => {
-            //    firebaseusualExpenses = firebaseusualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
-            // })
-            let localHabbits;
+            let localExpenses;
             firebaseusualExpenses.map((usualExpense) => {
-               localHabbits = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
+               localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
             })
             console.log(firebaseusualExpenses)
-            setSortHabbits([...usualExpenses, ...firebaseusualExpenses]);
-            // await setInitializing(false);
+            setSortExpenses([...usualExpenses, ...firebaseusualExpenses]);
          }
          })
       } catch (error) {

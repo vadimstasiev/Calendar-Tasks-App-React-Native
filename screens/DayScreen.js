@@ -217,13 +217,15 @@ const DayScreen = ({route, navigation}) => {
 
 
    // Initalize empty array to store expenses
-   const [expenses, setExpenses] = useState([])
+   const [expenses, setExpenses] = useState([]);
 
    const [titleDescription, setTitleDescription] = useState("");
 
-   const [titlePrice, setTitlePrice] = useState("")
+   const [titlePrice, setTitlePrice] = useState("");
 
-   const [totalCost, setTotalCost] = useState(0)
+   const [totalCost, setTotalCost] = useState(0);
+
+   const [usualExpenses, setUsualExpenses] = useState([]);
 
   // function to add expense object in expense list
   const addExpense = async () => {
@@ -287,10 +289,11 @@ const DayScreen = ({route, navigation}) => {
 
   useEffect(() => {
       navigation.setOptions({ title: `${day}` })
-      let unsubscribe = () => {};
+      let unsubscribe1 = () => {};
+      let unsubscribe2 = () => {};
       setInitializing(true);
       try {
-         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc(day).onSnapshot( async querySnapshot=>{
+         unsubscribe1 = db.collection("users").doc(user.uid).collection(month).doc(day).onSnapshot( async querySnapshot=>{
             // await setInitializing(true);
             let data = await querySnapshot.data()
             let firebaseExpenses = []
@@ -319,13 +322,36 @@ const DayScreen = ({route, navigation}) => {
          console.log('Firestore error', error);
       }
 
+      try {
+         unsubscribe2 = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
+            let data = await querySnapshot.data()
+            let firebaseusualExpenses = []
+             console.log('data', data)
+            if (data) {
+               for (const id in data) {
+                  const name = data[id];
+                  firebaseusualExpenses.push({id, name})
+               }
+            let localExpenses;
+            firebaseusualExpenses.map((usualExpense) => {
+               localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
+            })
+            console.log(firebaseusualExpenses)
+            setUsualExpenses([...usualExpenses, ...firebaseusualExpenses]);
+         }
+         })
+      } catch (error) {
+         console.log('Firestore error', error);
+      }
+
       setInitializing(false);
 
       // const navUnsubscribe = navigation.addListener('onLeaving', (e) => {
       //    submit();
       // })
       return () => {
-         unsubscribe();
+         unsubscribe1();
+         unsubscribe2();
          // navUnsubscribe();
       }
  }, []);
@@ -428,7 +454,7 @@ const DayScreen = ({route, navigation}) => {
                price={expense.expense[1]}
                editExpense={editExpense}
                deleteExpense={deleteExpense}
-            />
+               />
          ))}
          </ScrollView>
       </Container>
