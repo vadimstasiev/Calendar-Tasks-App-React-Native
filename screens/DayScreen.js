@@ -229,8 +229,8 @@ const DayScreen = ({route, navigation}) => {
 
   // function to add expense object in expense list
   const addExpense = async () => {
-     console.log(titlePrice.length)
-      if (titleDescription.length > 0 && String(titlePrice).length > 0) {
+     console.log((titleDescription.length ))
+      if (titleDescription.length > 0 && titlePrice!==null) {
          // Add expense to the list
          let sendToFirestoreexpenses = {}
          let description=titleDescription;
@@ -370,7 +370,7 @@ const DayScreen = ({route, navigation}) => {
       const regex = new RegExp(`${query.trim()}`, 'i');
       // Setting the filtered film array according the query
       setFilteredUsualExpenses(
-            expenses.filter((expense) => expense.description.search(regex) >= 0)
+            expenses.filter((expense) => String(expense.description).search(regex) >= 0)
       );
       } 
       // else {
@@ -411,7 +411,12 @@ const DayScreen = ({route, navigation}) => {
           // To show the suggestions
           onChangeText={(text) => findExpense(text)}
           onFocus={()=>setFilteredUsualExpenses(usualExpenses)}
-          onEndEditing={()=>setFilteredUsualExpenses([])}
+          onEndEditing={(e)=>{
+             // console.log('text', e.nativeEvent.text)
+             setTitleDescription(e.nativeEvent.text);
+             setFilteredUsualExpenses([]);
+            }
+          }
           placeholder="Add an expense"
           renderItem={({item}) => (
             // For the suggestion view
