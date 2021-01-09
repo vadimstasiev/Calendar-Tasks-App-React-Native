@@ -170,6 +170,7 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
          <Icon
             name="delete"
             size={20}
+            color='red'
          />
       </TouchableOpacity>
       <TouchableOpacity
@@ -300,19 +301,29 @@ const DayScreen = ({route, navigation}) => {
              console.log('data', data)
             if (data) {
                for (const id in data) {
-                  const expense = data[id];
-                  // console.log('here', id, name)
-                  firebaseExpenses.push({id, expense})
+                  if(id!=="totalCost"){
+                     const expense = data[id];
+                     // console.log('here', id, name)
+                     firebaseExpenses.push({id, expense})
+                  }
                }
             // expenses.map((expense) => {
             //    firebaseExpenses = firebaseExpenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
             // })
             let localExpenses;
+            let localTotalCost = 0;
             firebaseExpenses.map((expense) => {
-               setTotalCost(totalCost+Number(expense.expense[1]))
-               console.log(expense.expense[1])
-               localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id)
+               // console.log(expense.expense[1]);
+               localTotalCost += Number(expense.expense[1]);
+               localExpenses = expenses.filter((firebaseExpense) => firebaseExpense.id!==expense.id);
             })
+            localTotalCost = Math.round(localTotalCost * 100) / 100
+            setTotalCost(localTotalCost);
+            console.log('localTotalCost', localTotalCost)
+            db.collection("users").doc(user.uid).collection(month).doc(day).update({totalCost:localTotalCost})
+            .catch((error) => {
+               console.error("Error setting total cost: ", error);
+            });
             console.log('firebase', firebaseExpenses)
             setSortExpenses([...expenses, ...firebaseExpenses]);
             // await setInitializing(false);
