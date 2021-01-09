@@ -25,7 +25,7 @@ const ItemList = (props) => {
    const [usualExpense, setusualExpense] = useState(props.usualExpense)
    const editClicked=()=>{
       setIsEditing(!isEditing);
-      props.editusualExpense(props.usualExpense.id, usualExpense.name);
+      props.editusualExpense(props.usualExpense.id, usualExpense.description);
    }
    return (
      <View style={styles.listTile}>
@@ -34,18 +34,18 @@ const ItemList = (props) => {
             <Body>
             {isEditing?
                <Text >
-               {props.usualExpense.name}
+               {props.usualExpense.description}
                {'     '}
                </Text>
             :
             <>
                <TextInput
-               defaultValue={String(props.usualExpense.name)}
+               defaultValue={String(props.usualExpense.description)}
                autoFocus={true}
                onEndEditing={()=>{
                   editClicked()
                }}
-               onChangeText={value => setusualExpense({...usualExpense, name: value})}
+               onChangeText={value => setusualExpense({...usualExpense, description: value})}
                />
             </>
             }
@@ -93,7 +93,7 @@ const ItemList = (props) => {
       onPress={editClicked}
       >
         <Icon
-            name={"edit"}
+            description={"edit"}
             size={20}
             color="green"
             onEndEditing={()=>{
@@ -139,13 +139,13 @@ const usualExpensesScreen = ({navigation, user}) => {
       let temp = {}
       for (let usualExpense in usualExpenses){
          console.log('usualExpense', usualExpenses[usualExpense])
-         temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].name;
+         temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].description;
       }
 
   };
 
   const editusualExpense = (id, expenseUpdate) => {
-      // setSortExpenses([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, name: title}]);
+      // setSortExpenses([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, description: title}]);
       // console.log(id, title)
       db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:expenseUpdate})
       .catch((error) => {
@@ -186,8 +186,8 @@ const usualExpensesScreen = ({navigation, user}) => {
              console.log('data', data)
             if (data) {
                for (const id in data) {
-                  const name = data[id];
-                  firebaseusualExpenses.push({id, name})
+                  const description = data[id];
+                  firebaseusualExpenses.push({id, description})
                }
             let localExpenses;
             firebaseusualExpenses.map((usualExpense) => {

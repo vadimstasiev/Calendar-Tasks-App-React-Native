@@ -325,19 +325,18 @@ const DayScreen = ({route, navigation}) => {
       try {
          unsubscribe2 = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data()
-            let firebaseusualExpenses = []
-             console.log('data', data)
+            let firebaseUsualExpenses = []
             if (data) {
-               for (const id in data) {
-                  const name = data[id];
-                  firebaseusualExpenses.push({id, name})
+               for (let id in data) {
+                  const description = data[id];
+                  firebaseUsualExpenses.push({id, description})
                }
             let localExpenses;
-            firebaseusualExpenses.map((usualExpense) => {
+            firebaseUsualExpenses.map((usualExpense) => {
                localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
             })
-            console.log(firebaseusualExpenses)
-            setUsualExpenses([...usualExpenses, ...firebaseusualExpenses]);
+            console.log(firebaseUsualExpenses)
+            setUsualExpenses([...usualExpenses, ...firebaseUsualExpenses]);
          }
          })
       } catch (error) {
@@ -356,27 +355,28 @@ const DayScreen = ({route, navigation}) => {
       }
  }, []);
 
-   // For Main Data
-   const [films, setFilms] = useState([{"userId":1,"id":1,"title":"delectus aut autem","completed":false},{"userId":1,"id":2,"title":"quis ut nam facilis et officia qui","completed":false},{"userId":1,"id":3,"title":"fugiat veniam minus","completed":false},{"userId":1,"id":4,"title":"et porro tempora","completed":true},{"userId":1,"id":5,"title":"laboriosam mollitia et enim quasi adipisci quia provident illum","completed":false},{"userId":1,"id":6,"title":"qui ullam ratione quibusdam voluptatem quia omnis","completed":false},{"userId":1,"id":7,"title":"illo expedita consequatur quia in","completed":false},{"userId":1,"id":8,"title":"quo adipisci enim quam ut ab","completed":true},{"userId":1,"id":9,"title":"molestiae perspiciatis ipsa","completed":false},{"userId":1,"id":10,"title":"illo est ratione doloremque quia maiores aut","completed":true}]);
+   // For Main Data // e.g.
+   // const [films, setFilms] = useState([{"userId":1,"id":1,"title":"delectus aut autem","completed":false},{"userId":1,"id":2,"title":"quis ut nam facilis et officia qui","completed":false},{"userId":1,"id":3,"title":"fugiat veniam minus","completed":false},{"userId":1,"id":4,"title":"et porro tempora","completed":true},{"userId":1,"id":5,"title":"laboriosam mollitia et enim quasi adipisci quia provident illum","completed":false},{"userId":1,"id":6,"title":"qui ullam ratione quibusdam voluptatem quia omnis","completed":false},{"userId":1,"id":7,"title":"illo expedita consequatur quia in","completed":false},{"userId":1,"id":8,"title":"quo adipisci enim quam ut ab","completed":true},{"userId":1,"id":9,"title":"molestiae perspiciatis ipsa","completed":false},{"userId":1,"id":10,"title":"illo est ratione doloremque quia maiores aut","completed":true}]);
    // For Filtered Data
-   const [filteredFilms, setFilteredFilms] = useState([]);
+   const [filteredUsualExpenses, setFilteredUsualExpenses] = useState([]);
    // For Selected Data
    const [selectedValue, setSelectedValue] = useState({});
    
 
-   const findFilm = (query) => {
+   const findExpense = (query) => {
       // Method called every time when we change the value of the input
       if (query) {
       // Making a case insensitive regular expression
       const regex = new RegExp(`${query.trim()}`, 'i');
       // Setting the filtered film array according the query
-      setFilteredFilms(
-            films.filter((film) => film.title.search(regex) >= 0)
+      setFilteredUsualExpenses(
+            expenses.filter((expense) => expense.description.search(regex) >= 0)
       );
-      } else {
-      // If the query is null then return blank
-      setFilteredFilms([]);
-      }
+      } 
+      // else {
+      // // If the query is null then return blank
+      // setFilteredUsualExpenses([]);
+      // }
    };
 
    if (initializing) return <View style={styles.loadingContainer}>
@@ -399,27 +399,29 @@ const DayScreen = ({route, navigation}) => {
           inputContainerStyle={styles.textboxDescription}
          //  inputContainerStyle={{border: 0, margin:0, paddingRight:0}}
           // Data to show in suggestion
-          data={filteredFilms}
+          data={filteredUsualExpenses}
           // Default value if you want to set something in input
           defaultValue={
             JSON.stringify(selectedValue) === '{}' ?
             '' :
-            selectedValue.title
+            selectedValue.description
           }
           // Onchange of the text changing the state of the query
-          // Which will trigger the findFilm method
+          // Which will trigger the findExpense method
           // To show the suggestions
-          onChangeText={(text) => findFilm(text)}
+          onChangeText={(text) => findExpense(text)}
+          onFocus={()=>setFilteredUsualExpenses(usualExpenses)}
+          onEndEditing={()=>setFilteredUsualExpenses([])}
           placeholder="Add an expense"
           renderItem={({item}) => (
             // For the suggestion view
             <TouchableOpacity
               onPress={() => {
                 setSelectedValue(item);
-                setFilteredFilms([]);
+                setFilteredUsualExpenses([]);
               }}>
               <Text style={styles.itemText}>
-                  {item.title}
+                  {item.description}
               </Text>
             </TouchableOpacity>
           )}
