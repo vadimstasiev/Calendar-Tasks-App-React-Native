@@ -56,6 +56,7 @@ const HomeScreen = (props) => {
           <Content >
           {screen==='Calendar'?
             <CalendarScreen user={user} {...props}/>
+            // <CalendarScreenDemo user={user} {...props}/>
             :<></>}
           {screen==='UsualExpenses'?
             <UsualExpenses user={user} {...props}/>
