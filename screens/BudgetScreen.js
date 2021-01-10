@@ -314,30 +314,26 @@ const Notes = ({user, navigation}) => {
             fontSize:16,
          }}
         />
-         <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent: 'center',
-    alignItems: 'center'
-}}>
+         <View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'center', paddingLeft:14}}>
          {isEditingColor?
             <>
                <ColorPalette
-                  style = {{width:"10%"}}
                   onChange={ color => {
-                     setIsEditingColor(false)
-                     // setColor(color);
+                     setColor(color);
+                     setIsEditingColor(false);
                      // submit(color);
                   }}
                   value={color}
                   // colors={colorOptions}
                   titleStyles={{display:"none"}}
-                  colors= {[color]}
-                  icon={()=>{}}
-                  />
+                  colors= {pallete}
+               />
             </>
          :
             <>
-               <Text>{color}</Text>
+               <Text style = {{ marginLeft:20 }}>{color}</Text>
                <ColorPalette
-                  style = {{width:"10%"}}
+                  style = {{width:"100%"}}
                   onChange={ color => {
                      setIsEditingColor(true)
                      // setColor(color);
@@ -347,12 +343,16 @@ const Notes = ({user, navigation}) => {
                   // colors={colorOptions}
                   titleStyles={{display:"none"}}
                   colors= {[color]}
-                  icon={()=>{}}
+                  icon={<Icon name="edit" size={18} color="white"></Icon>}
                />
+               <Button style={{ marginLeft:40, borderRadius:50, width:"50%", backgroundColor: 'green', justifyContent: 'center', alignItems: 'center'}} 
+                  onPress={() => {}}
+               >
+                  <Text>Add</Text>
+               </Button>
             </>
          }
          </View>
-        <Button style={{border:13, borderRadius:100, width:"50%", backgroundColor: 'green', justifyContent: 'center', alignItems: 'center'}} onPress={() => {}}><Text>Add</Text></Button>
       </View>
       <Content padder>
          <ColorBudgetSelector pallete={pallete}/>
