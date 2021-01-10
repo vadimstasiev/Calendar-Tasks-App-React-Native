@@ -56,22 +56,22 @@ const testIDs = {
 const CalendarsScreen = ({navigation, user}) => {
 
   navigation.setOptions({ title: `Calendar` });
-  const defaultColor = "white";
-  const colorOptions = ['#3a402a', '#688052', '#6aab6a', '#d9b358', '#fff2a7'];
-  let defaultMood = 'None';
-  const moods = {
-     '#fff2a7':'Awesome',
-     '#d9b358':'Good',
-     '#6aab6a':'Fine',
-     '#688052':'Bad',
-     '#3a402a':'Terrible'
-  }
+  // const defaultColor = "white";
+  // const colorOptions = ['#3a402a', '#688052', '#6aab6a', '#d9b358', '#fff2a7'];
+  // let defaultMood = 'None';
+  // const moods = {
+  //    '#fff2a7':'Awesome',
+  //    '#d9b358':'Good',
+  //    '#6aab6a':'Fine',
+  //    '#688052':'Bad',
+  //    '#3a402a':'Terrible'
+  // }
 
 
   const dayPress = (dayData) => {
     console.log(dayData)
     const {day, month} = dayData;
-    navigation.navigate('Day', {user, day: String(day), month: String(month), moods, defaultMood, colorOptions})
+    navigation.navigate('Day', {user, day: String(day), month: String(month)})
   }
   
   const renderCalendarWithPeriodMarkingAndDotMarking = () => {

@@ -212,7 +212,7 @@ const ItemList = ({ id, description, price, editExpense, deleteExpense }) => {
 const DayScreen = ({route, navigation}) => {
 
 
-   const { user, day, month, moods, defaultMood, colorOptions } = route.params;
+   const { user, day, month } = route.params;
 
    const [initializing, setInitializing] = useState(true)
 

@@ -7,6 +7,7 @@ import firestore from "@react-native-firebase/firestore";
 
 import CalendarScreen from './CalendarScreen';
 import CalendarScreenDemo from './CalendarScreenDemo';
+import BudgetScreen from './BudgetScreen';
 import UsualExpenses from './UsualExpenses';
 import LoadingScreen from "./LoadingScreen";
 
@@ -58,6 +59,9 @@ const HomeScreen = (props) => {
             <CalendarScreen user={user} {...props}/>
             // <CalendarScreenDemo user={user} {...props}/>
             :<></>}
+          {screen==='Budget'?
+            <BudgetScreen user={user} {...props}/>
+          :<></>}
           {screen==='UsualExpenses'?
             <UsualExpenses user={user} {...props}/>
           :<></>}
@@ -66,6 +70,9 @@ const HomeScreen = (props) => {
             <FooterTab style={{backgroundColor:'green'}}>
               <Button style={{backgroundColor:(screen==='Calendar'?"#256525":"green")}} onPress={(e)=>setScreen('Calendar')}>
                 <Text style={{color:'white'}}>Calendar</Text>
+              </Button>
+              <Button style={{backgroundColor:(screen==='Budget'?"#256525":"green")}} onPress={(e)=>setScreen('Budget')}>
+                <Text style={{color:'white'}}>Budget</Text>
               </Button>
               <Button style={{backgroundColor:(screen==='UsualExpenses'?"#256525":"green")}} onPress={(e)=>setScreen('UsualExpenses')}>
                 <Text style={{color:'white'}}>Usual Expenses</Text>
