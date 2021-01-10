@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TextInput, Alert } from "react-native";
-import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Icon, Footer, FooterTab} from "native-base";
+import { View, StyleSheet, TextInput, Alert,TouchableOpacity } from "react-native";
+import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Footer, FooterTab} from "native-base";
 import ColorPalette from 'react-native-color-palette';
+
+import Icon from "react-native-vector-icons/AntDesign";
 
 import auth, { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
@@ -48,104 +50,131 @@ const ColorBudgetSelector = ({}) => {
    const [color, setColor] = useState('#C0392B');
    const [isEditing, setIsEditing] = useState(false);
    return <ListItem>
-      <Card>
-         <CardItem >
-            {isEditing?
-               <Form>
-                  <Card style={{width:"100%"}}>
-                        <FakeCurrencyInput
-                           // autoFocus={true}
-                           // style={{fontSize:20, width:'100%'}} 
-                           value={budget}
-                           onChangeValue={value => setBudget(value)}
-                           unit="£"
-                           delimiter=","
-                           separator="."
-                           precision={2}
-                           // editable={false}
-                           // onChangeText={(formattedValue) => {
-                           //    console.log(formattedValue); // $2,310.46
-                           // }}
-                           style={{
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              fontSize: 18,
-                              marginTop: 0,
-                              paddingBottom:8,
-                              width: "100%",
-                           }}
-                        />
-                  </Card>
-                  {/* <Text style={{
-                     textAlign: 'center',
-                     fontWeight: 'bold',
-                     fontSize: 18,
-                     marginTop: 0,
-                     width: "100%",
-                  }}>{color}</Text> */}
-                  <ColorPalette
-                        onChange={ color => {
-                           setColor(color);
-                           // submit(color);
-                        }}
-                        value={color}
-                        // colors={colorOptions}
-                        titleStyles={{display:"none"}}
-                        colors= {[
-                           '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
-                           '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
-                           '#FFFFFF', '#BDC3C7', '#95A5A6', '#7F8C8D',
-                         ]}
-                     />
-               </Form>
-               :
-               <Form style={{width:"100%"}}>
-                  <Card style={{width:"80%"}}>
-                        <FakeCurrencyInput
-                           // autoFocus={true}
-                           // style={{fontSize:20, width:'100%'}} 
-                           value={budget}
-                           onChangeValue={value => setBudget(value)}
-                           unit="£"
-                           delimiter=","
-                           separator="."
-                           precision={2}
-                           // editable={false}
-                           // onChangeText={(formattedValue) => {
-                           //    console.log(formattedValue); // $2,310.46
-                           // }}
-                           style={{
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              fontSize: 18,
-                              marginTop: 0,
-                              paddingBottom:8,
-                              width: "100%",
-                           }}
-                        />
-                  </Card>
-                  {/* <Text style={{
-                     textAlign: 'center',
-                     fontWeight: 'bold',
-                     fontSize: 18,
-                     marginTop: 0,
-                     width: "100%",
-                  }}>{color}</Text> */}
-                  <ColorPalette
-                        style={{width:"10%"}}
-                        onChange={ color => {
-                           setColor(color);
-                           // submit(color);
-                        }}
-                        value={color}
-                        // colors={colorOptions}
-                        titleStyles={{display:"none"}}
-                        colors= {[color]}
-                     />
-               </Form>
-            }
-         </CardItem>
-      </Card>
+      {isEditing?
+         <>
+            <Card style={{width:"90%"}}>
+               <CardItem >
+                     <Form>
+                        <Card style={{width:"100%"}}>
+                              <FakeCurrencyInput
+                                 // autoFocus={true}
+                                 // style={{fontSize:20, width:'100%'}} 
+                                 value={budget}
+                                 onChangeValue={value => setBudget(value)}
+                                 unit="£"
+                                 delimiter=","
+                                 separator="."
+                                 precision={2}
+                                 // editable={false}
+                                 // onChangeText={(formattedValue) => {
+                                 //    console.log(formattedValue); // $2,310.46
+                                 // }}
+                                 style={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold',
+                                    fontSize: 18,
+                                    marginTop: 0,
+                                    paddingBottom:8,
+                                    width: "100%",
+                                 }}
+                              />
+                        </Card>
+                        {/* <Text style={{
+                           textAlign: 'center',
+                           fontWeight: 'bold',
+                           fontSize: 18,
+                           marginTop: 0,
+                           width: "100%",
+                        }}>{color}</Text> */}
+                        <ColorPalette
+                              onChange={ color => {
+                                 setColor(color);
+                                 // submit(color);
+                              }}
+                              value={color}
+                              // colors={colorOptions}
+                              titleStyles={{display:"none"}}
+                              colors= {[
+                                 '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
+                                 '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
+                                 '#FFFFFF', 
+                                 // '#BDC3C7', '#95A5A6', '#7F8C8D',
+                              ]}
+                           />
+                     </Form>
+               </CardItem>
+            </Card>
+            <TouchableOpacity
+               style={styles.button}
+               onPress={()=>setIsEditing(false)}
+               style={{width:"15%"}}
+            >
+               <Icon
+                  name={"save"}
+                  size={30}
+                  style={{paddingLeft:10}}
+               />
+               <Text>Save</Text>
+            </TouchableOpacity>
+         </>
+      :
+         <>
+            <TouchableOpacity
+               style={styles.button}
+               onPress={()=>setIsEditing(true)}
+               style={{width:"10%"}}
+            >
+               <Icon
+                  name={"edit"}
+                  size={20}
+                  color="#666666"
+               />
+            </TouchableOpacity>
+            <Card style={{width:"80%"}}>
+                  <FakeCurrencyInput
+                     // autoFocus={true}
+                     // style={{fontSize:20, width:'100%'}} 
+                     value={budget}
+                     onChangeValue={value => setBudget(value)}
+                     unit="£"
+                     delimiter=","
+                     separator="."
+                     precision={2}
+                     editable={false}
+                     // onChangeText={(formattedValue) => {
+                     //    console.log(formattedValue); // $2,310.46
+                     // }}
+                     style={{
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        marginTop: 0,
+                        paddingBottom:8,
+                        width: "100%",
+                     }}
+                  />
+            </Card>
+            {/* <Text style={{
+               textAlign: 'center',
+               fontWeight: 'bold',
+               fontSize: 18,
+               marginTop: 0,
+               width: "100%",
+            }}>{color}</Text> */}
+            <ColorPalette
+                  style={{width:"10%"}}
+                  onChange={ color => {
+                     setColor(color);
+                     // submit(color);
+                  }}
+                  value={color}
+                  // colors={colorOptions}
+                  titleStyles={{display:"none"}}
+                  colors= {[color]}
+                  icon={()=>{}}
+               />
+         </>
+      }
    </ListItem>
 }
 
