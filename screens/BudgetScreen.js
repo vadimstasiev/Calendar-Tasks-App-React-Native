@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TextInput, Alert } from "react-native";
-import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Content, ListItem, CheckBox, Icon, Footer, FooterTab} from "native-base";
+import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Icon, Footer, FooterTab} from "native-base";
 import ColorPalette from 'react-native-color-palette';
 
 import auth, { firebase } from "@react-native-firebase/auth";
@@ -35,16 +35,117 @@ import Svg, {
 import { sub } from "react-native-reanimated";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
+import { FakeCurrencyInput } from 'react-native-currency-input';
+
+
 let db = firestore();
 
 
-const HabitCheckBox = ({habit, toggleChecked, checked}) => {
+const ColorBudgetSelector = ({}) => {
    // const [isChecked, setIsChecked] = useState(false);
+   const defaultBudget = 2323; // change later
+   const [budget, setBudget] = useState(defaultBudget);
+   const [color, setColor] = useState('#C0392B');
+   const [isEditing, setIsEditing] = useState(false);
    return <ListItem>
-      <CheckBox onPress={()=>toggleChecked(habit.id, checked)} checked={checked} color={'green'}/>
-      <Body>
-         <Text>{habit.name}</Text>
-      </Body>
+      <Card>
+         <CardItem >
+            {isEditing?
+               <Form>
+                  <Card style={{width:"100%"}}>
+                        <FakeCurrencyInput
+                           // autoFocus={true}
+                           // style={{fontSize:20, width:'100%'}} 
+                           value={budget}
+                           onChangeValue={value => setBudget(value)}
+                           unit="£"
+                           delimiter=","
+                           separator="."
+                           precision={2}
+                           // editable={false}
+                           // onChangeText={(formattedValue) => {
+                           //    console.log(formattedValue); // $2,310.46
+                           // }}
+                           style={{
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              fontSize: 18,
+                              marginTop: 0,
+                              paddingBottom:8,
+                              width: "100%",
+                           }}
+                        />
+                  </Card>
+                  {/* <Text style={{
+                     textAlign: 'center',
+                     fontWeight: 'bold',
+                     fontSize: 18,
+                     marginTop: 0,
+                     width: "100%",
+                  }}>{color}</Text> */}
+                  <ColorPalette
+                        onChange={ color => {
+                           setColor(color);
+                           // submit(color);
+                        }}
+                        value={color}
+                        // colors={colorOptions}
+                        titleStyles={{display:"none"}}
+                        colors= {[
+                           '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
+                           '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
+                           '#FFFFFF', '#BDC3C7', '#95A5A6', '#7F8C8D',
+                         ]}
+                     />
+               </Form>
+               :
+               <Form style={{width:"100%"}}>
+                  <Card style={{width:"80%"}}>
+                        <FakeCurrencyInput
+                           // autoFocus={true}
+                           // style={{fontSize:20, width:'100%'}} 
+                           value={budget}
+                           onChangeValue={value => setBudget(value)}
+                           unit="£"
+                           delimiter=","
+                           separator="."
+                           precision={2}
+                           // editable={false}
+                           // onChangeText={(formattedValue) => {
+                           //    console.log(formattedValue); // $2,310.46
+                           // }}
+                           style={{
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              fontSize: 18,
+                              marginTop: 0,
+                              paddingBottom:8,
+                              width: "100%",
+                           }}
+                        />
+                  </Card>
+                  {/* <Text style={{
+                     textAlign: 'center',
+                     fontWeight: 'bold',
+                     fontSize: 18,
+                     marginTop: 0,
+                     width: "100%",
+                  }}>{color}</Text> */}
+                  <ColorPalette
+                        style={{width:"10%"}}
+                        onChange={ color => {
+                           setColor(color);
+                           // submit(color);
+                        }}
+                        value={color}
+                        // colors={colorOptions}
+                        titleStyles={{display:"none"}}
+                        colors= {[color]}
+                     />
+               </Form>
+            }
+         </CardItem>
+      </Card>
    </ListItem>
 }
 
@@ -178,69 +279,9 @@ const Notes = ({user, navigation}) => {
                }}>Set the Cost Colors for the Calendar</Text>
         </Header>
       <Content padder>
-         <Form>
-            <Textarea rowSpan={5} onChangeText={setCost} value={cost} onEndEditing={()=>submit()}
-            bordered placeholder="" />
-            {/* <View style={styles.textAreaContainer} >
-               <TextInput
-                  style={styles.textArea}
-                  underlineColorAndroid="transparent"
-                  placeholder="Type something"
-                  placeholderTextColor="grey"
-                  numberOfLines={10}
-                  multiline={true}
-                  onChangeText={setCost} value={cost} onEndEditing={submit}
-               />
-            </View> */}
-            <Text style={{
-               textAlign: 'center',
-               fontWeight: 'bold',
-               fontSize: 18,
-               marginTop: 0,
-               width: "100%",
-            }}>{color}</Text>
-            <ColorPalette
-                  onChange={ color => {
-                     setColor(color);
-                     submit(color);
-                  }}
-                  value={color}
-                  // colors={colorOptions}
-                  titleStyles={{display:"none"}}
-               />
-         </Form>
-         <Content>
-            <Text style={{
-               textAlign: 'center',
-               // fontWeight: 'bold',
-               fontSize: 18,
-               marginTop: 0,
-               // width: "100%",
-            }}>{habits.length>0?'Habits Performed':''}</Text>
-            {habits.map((habit) => {
-               return <HabitCheckBox key={habit.id} habit={habit} toggleChecked={habitToggleChecked} checked={habitsChecked.includes(String(habit.id))}/>
-            })}
-            
-         </Content>
+         <ColorBudgetSelector/>
+         
       </Content>
-      <Footer>
-         <FooterTab>
-            <Button active={true} onPress={() => Alert.alert(
-               "Delete",
-               "Are you sure you want to delete?",
-               [
-                 {
-                   text: "Cancel",
-                   style: "cancel"
-                 },
-                 { text: "OK", onPress: deleteColor }
-               ],
-               { cancelable: true }
-             )}>
-               <Text>Delete Day</Text>
-            </Button>
-         </FooterTab>
-      </Footer>
    </Container>
 }
 
