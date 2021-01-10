@@ -44,6 +44,14 @@ let db = firestore();
 
 
 const ColorBudgetSelector = ({}) => {
+
+   const pallete = [
+      '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
+      '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
+      '#FFFFFF', 
+      '#BDC3C7', '#95A5A6', '#7F8C8D',
+   ]
+
    // const [isChecked, setIsChecked] = useState(false);
    const defaultBudget = 2323; // change later
    const [budget, setBudget] = useState(defaultBudget);
@@ -52,7 +60,7 @@ const ColorBudgetSelector = ({}) => {
    return <ListItem>
       {isEditing?
          <>
-            <Card style={{width:"90%"}}>
+            <Card style={{width:"100%"}}>
                <CardItem >
                      <Form>
                         <Card style={{width:"100%"}}>
@@ -65,7 +73,7 @@ const ColorBudgetSelector = ({}) => {
                                  delimiter=","
                                  separator="."
                                  precision={2}
-                                 // editable={false}
+                                 editable={false}
                                  // onChangeText={(formattedValue) => {
                                  //    console.log(formattedValue); // $2,310.46
                                  // }}
@@ -89,22 +97,18 @@ const ColorBudgetSelector = ({}) => {
                         <ColorPalette
                               onChange={ color => {
                                  setColor(color);
+                                 setIsEditing(false);
                                  // submit(color);
                               }}
                               value={color}
                               // colors={colorOptions}
                               titleStyles={{display:"none"}}
-                              colors= {[
-                                 '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
-                                 '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
-                                 '#FFFFFF', 
-                                 // '#BDC3C7', '#95A5A6', '#7F8C8D',
-                              ]}
+                              colors= {pallete}
                            />
                      </Form>
                </CardItem>
             </Card>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                style={styles.button}
                onPress={()=>setIsEditing(false)}
                style={{width:"15%"}}
@@ -115,11 +119,11 @@ const ColorBudgetSelector = ({}) => {
                   style={{paddingLeft:10}}
                />
                <Text>Save</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
          </>
       :
          <>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                style={styles.button}
                onPress={()=>setIsEditing(true)}
                style={{width:"10%"}}
@@ -129,8 +133,8 @@ const ColorBudgetSelector = ({}) => {
                   size={20}
                   color="#666666"
                />
-            </TouchableOpacity>
-            <Card style={{width:"80%"}}>
+            </TouchableOpacity> */}
+            <Card style={{width:"90%"}}>
                   <FakeCurrencyInput
                      // autoFocus={true}
                      // style={{fontSize:20, width:'100%'}} 
@@ -164,7 +168,8 @@ const ColorBudgetSelector = ({}) => {
             <ColorPalette
                   style={{width:"10%"}}
                   onChange={ color => {
-                     setColor(color);
+                     setIsEditing(true)
+                     // setColor(color);
                      // submit(color);
                   }}
                   value={color}
