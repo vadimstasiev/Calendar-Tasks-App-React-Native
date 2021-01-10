@@ -379,15 +379,17 @@ const DayScreen = ({route, navigation}) => {
       if (query) {
       // Making a case insensitive regular expression
       const regex = new RegExp(`${query.trim()}`, 'i');
+      console.log(regex)
       // Setting the filtered film array according the query
       setFilteredUsualExpenses(
-            expenses.filter((expense) => String(expense.description).search(regex) >= 0)
+            usualExpenses.filter((expense) => String(expense.description).search(regex) >= 0)
       );
       } 
-      // else {
-      // // If the query is null then return blank
+      else {
+      // If the query is null then return blank
       // setFilteredUsualExpenses([]);
-      // }
+      setFilteredUsualExpenses(usualExpenses)
+      }
    };
 
    if (initializing) return <View style={styles.loadingContainer}>
