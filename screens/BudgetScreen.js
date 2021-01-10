@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TextInput, Alert,TouchableOpacity } from "react-native";
+import { View, StyleSheet, TextInput, Alert,TouchableOpacity, Button as RButton } from "react-native";
 import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Footer, FooterTab} from "native-base";
 import ColorPalette from 'react-native-color-palette';
 
@@ -43,14 +43,9 @@ import { FakeCurrencyInput } from 'react-native-currency-input';
 let db = firestore();
 
 
-const ColorBudgetSelector = ({}) => {
+const ColorBudgetSelector = ({pallete}) => {
 
-   const pallete = [
-      '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
-      '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
-      '#FFFFFF', 
-      '#BDC3C7', '#95A5A6', '#7F8C8D',
-   ]
+   
 
    // const [isChecked, setIsChecked] = useState(false);
    const defaultBudget = 2323; // change later
@@ -191,7 +186,15 @@ const Notes = ({user, navigation}) => {
    const [cost, setCost] = useState(''); // will change to price cost
    const [firestoreInput, setFirestoreInput] = useState();
 
+   const pallete = [
+      '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
+      '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
+      '#FFFFFF', 
+      '#BDC3C7', '#95A5A6', '#7F8C8D',
+   ]
+
    const [color, setColor] = useState('#C0392B');
+   const [isEditingColor, setIsEditingColor] = useState(false);
    
    // const [color, setColor] = useState(defaultMood);
    const [firestoreMood, setFirestoreMood] = useState();
@@ -208,22 +211,6 @@ const Notes = ({user, navigation}) => {
       })])
   }
 
-   const habitToggleChecked = (id, checked) => {
-      if(checked){
-         temp = habitsChecked;
-         for (let i = temp.length - 1; i >= 0; i--) {
-            if (temp[i] === id) {
-               temp.splice(i, 1);
-            }
-         }
-         setHabitsChecked(temp);
-      } else {
-         if(!habitsChecked.includes(id)){
-            habitsChecked.push(id);
-         }
-      }
-      submit();
-   }
 
    const submit = (submitColor=color) => {
       console.log(user.uid, "budget")
@@ -302,7 +289,7 @@ const Notes = ({user, navigation}) => {
    </View>
 
    return <Container>
-         <Header style={{backgroundColor:'#2E8B57'}}>
+         {/* <Header style={{backgroundColor:'#2E8B57'}}>
             <Text style={{
                   textAlign: 'center',
                   fontWeight: 'bold',
@@ -311,9 +298,64 @@ const Notes = ({user, navigation}) => {
                   // width: 200,
                   color: 'white',
                }}>Set the Cost Colors for the Calendar</Text>
-        </Header>
+        </Header> */}
+        <View style={styles.usualExpense}>
+        <TextInput
+          placeholder="Add a budget limit"
+         //  value={title}
+         //  onChangeText={value => setTitle(value)}
+          style={{
+            borderWidth: 1,
+            borderColor: "green",
+            borderRadius: 8,
+            padding: 10,
+            margin: 10,
+            width: "95%", 
+            fontSize:16,
+         }}
+        />
+         <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent: 'center',
+    alignItems: 'center'
+}}>
+         {isEditingColor?
+            <>
+               <ColorPalette
+                  style = {{width:"10%"}}
+                  onChange={ color => {
+                     setIsEditingColor(false)
+                     // setColor(color);
+                     // submit(color);
+                  }}
+                  value={color}
+                  // colors={colorOptions}
+                  titleStyles={{display:"none"}}
+                  colors= {[color]}
+                  icon={()=>{}}
+                  />
+            </>
+         :
+            <>
+               <Text>{color}</Text>
+               <ColorPalette
+                  style = {{width:"10%"}}
+                  onChange={ color => {
+                     setIsEditingColor(true)
+                     // setColor(color);
+                     // submit(color);
+                  }}
+                  value={color}
+                  // colors={colorOptions}
+                  titleStyles={{display:"none"}}
+                  colors= {[color]}
+                  icon={()=>{}}
+               />
+            </>
+         }
+         </View>
+        <Button style={{border:13, borderRadius:100, width:"50%", backgroundColor: 'green', justifyContent: 'center', alignItems: 'center'}} onPress={() => {}}><Text>Add</Text></Button>
+      </View>
       <Content padder>
-         <ColorBudgetSelector/>
+         <ColorBudgetSelector pallete={pallete}/>
          
       </Content>
    </Container>
