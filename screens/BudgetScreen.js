@@ -270,6 +270,7 @@ const Notes = ({user, navigation}) => {
             separator="."
             precision={2}
             onChangeValue={value => setBudget(value)}
+            onEndEditing={()=>{setIsEditingColor(true)}}
             style={{
                borderWidth: 1,
                borderColor: "green",
