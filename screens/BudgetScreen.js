@@ -5,39 +5,11 @@ import ColorPalette from 'react-native-color-palette';
 
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-import auth, { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-// import { NavigationActions, StackActions } from 'react-navigation';
 import LoadingScreen from "./LoadingScreen";
 
 
-import Svg, {
-  Circle,
-  Ellipse,
-  G,
-  TSpan,
-  TextPath,
-  Path,
-  Text as SvgText,
-  Polygon,
-  Polyline,
-  Line,
-  Rect,
-  Use,
-  Image,
-  Symbol,
-  Defs,
-  LinearGradient,
-  RadialGradient,
-  Stop,
-  ClipPath,
-  Pattern,
-  Mask,
-} from "react-native-svg";
-import { set, sub } from "react-native-reanimated";
-import { Colors } from "react-native/Libraries/NewAppScreen";
-
-import CurrencyInput, { FakeCurrencyInput } from 'react-native-currency-input';
+import { FakeCurrencyInput } from 'react-native-currency-input';
 
 
 let db = firestore();
@@ -47,7 +19,6 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
 
    
 
-   // const [isChecked, setIsChecked] = useState(false);
    const defaultBudget = 2323; // change later
    const [budget, setBudget] = useState(defaultBudget);
    const [color, setColor] = useState('#C0392B');
@@ -60,8 +31,6 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
                      <Form>
                         <Card style={{width:"100%"}}>
                               <FakeCurrencyInput
-                                 // autoFocus={true}
-                                 // style={{fontSize:20, width:'100%'}} 
                                  value={budget}
                                  onChangeValue={value => setBudget(value)}
                                  unit="£"
@@ -69,9 +38,6 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
                                  separator="."
                                  precision={2}
                                  editable={false}
-                                 // onChangeText={(formattedValue) => {
-                                 //    console.log(formattedValue); // $2,310.46
-                                 // }}
                                  style={{
                                     textAlign: 'center',
                                     fontWeight: 'bold',
@@ -82,39 +48,18 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
                                  }}
                               />
                         </Card>
-                        {/* <Text style={{
-                           textAlign: 'center',
-                           fontWeight: 'bold',
-                           fontSize: 18,
-                           marginTop: 0,
-                           width: "100%",
-                        }}>{color}</Text> */}
                         <ColorPalette
                               onChange={ color => {
                                  setColor(color);
                                  setIsEditing(false);
-                                 // submit(color);
                               }}
                               value={color}
-                              // colors={colorOptions}
                               titleStyles={{display:"none"}}
                               colors= {pallete}
                            />
                      </Form>
                </CardItem>
             </Card>
-            {/* <TouchableOpacity
-               style={styles.button}
-               onPress={()=>setIsEditing(false)}
-               style={{width:"15%"}}
-            >
-               <Icon
-                  name={"save"}
-                  size={30}
-                  style={{paddingLeft:10}}
-               />
-               <Text>Save</Text>
-            </TouchableOpacity> */}
          </>
       :
          <>
@@ -131,8 +76,6 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
             </TouchableOpacity>
             <Card style={{width:"80%"}}>
                   <FakeCurrencyInput
-                     // autoFocus={true}
-                     // style={{fontSize:20, width:'100%'}} 
                      value={budget}
                      onChangeValue={value => setBudget(value)}
                      unit="£"
@@ -140,9 +83,6 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
                      separator="."
                      precision={2}
                      editable={false}
-                     // onChangeText={(formattedValue) => {
-                     //    console.log(formattedValue); // $2,310.46
-                     // }}
                      style={{
                         textAlign: 'center',
                         fontWeight: 'bold',
@@ -153,22 +93,12 @@ const ColorBudgetSelector = ({pallete, deleteBudget}) => {
                      }}
                   />
             </Card>
-            {/* <Text style={{
-               textAlign: 'center',
-               fontWeight: 'bold',
-               fontSize: 18,
-               marginTop: 0,
-               width: "100%",
-            }}>{color}</Text> */}
             <ColorPalette
                   style={{width:"10%"}}
                   onChange={ color => {
                      setIsEditing(true)
-                     // setColor(color);
-                     // submit(color);
                   }}
                   value={color}
-                  // colors={colorOptions}
                   titleStyles={{display:"none"}}
                   colors= {[color]}
                   icon={()=>{}}
@@ -212,10 +142,10 @@ const Notes = ({user, navigation}) => {
   }
 
 
-   const submit = (submitColor=color) => {
+   const addBudget = () => {
       console.log(user.uid, "budget")
       db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
-         color: submitColor, 
+         color 
       })
       .catch((error) => {
          console.error("Error adding document: ", error);
@@ -227,59 +157,34 @@ const Notes = ({user, navigation}) => {
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
-      // navigation.goBack();
    }
 
    useEffect(() => {
-      navigation.setOptions({ title: `Budget` })
-      let unsubscribeDay = () => {};
+      navigation.setOptions({ title: "Calendar Budget Filter" })
+      let unsubscribe = () => {};
       setInitializing(true);
       try {
-         unsubscribeDay = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
-            let data = await querySnapshot.data()
-            if (data){
-               setFirestoreInput(data.message);
-               setBudget(firestoreInput)
-               setFirestoreMood(data.color)
-               console.log(color)
-               if(color === defaultMood){
-                  setColor(data.color);
-               }
-               setHabitsChecked(data.habitsChecked || [])
-            }
-            // await setInitializing(false);
+         unsubscribe = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
+            // let data = await querySnapshot.data()
+            // if (data){
+            //    setFirestoreInput(data.message);
+            //    // setBudget(firestoreInput)
+            //    setFirestoreMood(data.color)
+            //    console.log(color)
+            //    if(color === defaultMood){
+            //       setColor(data.color);
+            //    }
+            //    setHabitsChecked(data.habitsChecked || [])
+            // }
          })
       } catch (error) {
          console.log('Firestore error', error);
       }
 
-      let unsubscribeHabbits = () => {};
-      try {
-         unsubscribeHabbits = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
-            let data = await querySnapshot.data();
-            let firebaseHabits = [];
-            if (data) {
-               for (const id in data) {
-                  const name = data[id];
-                  firebaseHabits.push({id, name});
-               }
-            setSortHabbits(firebaseHabits);
-            // setInitializing(false);
-         }
-         })
-      } catch (error) {
-         console.log('Firestore error', error);
-         // setInitializing(false);
-      }
 
-      const navUnsubscribe = navigation.addListener('submitBeforeGoing', (e) => {
-         submit();
-      })
       setInitializing(false);
       return () => {
-         unsubscribeDay();
-         unsubscribeHabbits();
-         navUnsubscribe();
+         unsubscribe();
       }
    }, [firestoreInput, firestoreMood]);
  
@@ -289,27 +194,12 @@ const Notes = ({user, navigation}) => {
    </View>
 
    return <Container style={{width:"100%"}}>
-         {/* <Header style={{backgroundColor:'#2E8B57'}}>
-            <Text style={{
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  marginTop: 15,
-                  // width: 200,
-                  color: 'white',
-               }}>Set the Cost Colors for the Calendar</Text>
-        </Header> */}
+
       {isEditingColor?
-      <View style={{
-         // flexDirection: "row",
-      //   width: "100%",
-      //   justifyContent: "center",
-         // alignItems: "center"
-      }}>
+      <View>
          <FakeCurrencyInput
-            // autoFocus={true}
             containerStyle={{width:"95%"}}
-            // placeholder="Add a budget limit"
+            placeholder="Add a budget limit" 
             value={budget}
             unit="£"
             delimiter=","
@@ -343,14 +233,10 @@ const Notes = ({user, navigation}) => {
       :
       <View style={{
          flexDirection: "row",
-      //   width: "100%",
-      //   justifyContent: "center",
          alignItems: "center"
       }}>
          <FakeCurrencyInput
-            // autoFocus={true}
             containerStyle={{width:"60%"}}
-            // placeholder="Add a budget limit"
             value={budget}
             unit="£"
             delimiter=","
@@ -381,7 +267,7 @@ const Notes = ({user, navigation}) => {
                   icon={<Icon name="edit" size={16} color={color!=='#FFFFFF'?"white":"black"}></Icon>}
                />
                <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', }} 
-                  onPress={() => {}}
+                  onPress={() => addBudget()}
                >
                   <Text>Add</Text>
                </Button>
