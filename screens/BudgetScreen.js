@@ -16,7 +16,7 @@ import { ScrollView } from "react-native-gesture-handler";
 let db = firestore();
 
 
-const ColorBudgetSelector = ({pallete, deleteBudget, bgt}) => {
+const ColorBudgetSelector = ({pallete, deleteBudget, updateColor, bgt}) => {
 
 
 
@@ -50,8 +50,15 @@ const ColorBudgetSelector = ({pallete, deleteBudget, bgt}) => {
                         </Card>
                         <ColorPalette
                               onChange={ color => {
+                                 const oldColor = color;
                                  setColor(color);
-                                 setIsEditing(false);
+                                 updateColor(budget, color)
+                                 .then(()=>{
+                                    setIsEditing(false);
+                                 })
+                                 .catch(()=>{
+                                    setColor(oldColor);
+                                 })
                               }}
                               value={color}
                               titleStyles={{display:"none"}}
@@ -77,7 +84,7 @@ const ColorBudgetSelector = ({pallete, deleteBudget, bgt}) => {
             <Card style={{width:"80%"}}>
                   <FakeCurrencyInput
                      value={budget}
-                     onChangeValue={value => setBudget(value)}
+                     // onChangeValue={value => setBudget(value)}
                      unit="£"
                      delimiter=","
                      separator="."
@@ -174,8 +181,17 @@ const Notes = ({user, navigation}) => {
    const deleteBudget = (budget) =>{
       db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).delete()
       .catch((error) => {
-         console.error("Error adding document: ", error);
+         console.error("Error deleting document: ", error);
       });
+   }
+
+   const updateColor = (budget, color) =>{
+      return db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).update({
+         color
+      })
+      // .catch((error) => {
+      //    console.error("Error updating document: ", error);
+      // });
    }
 
    useEffect(() => {
@@ -287,7 +303,7 @@ const Notes = ({user, navigation}) => {
       }
       <ScrollView padder>
          {budgets.map(bgt => 
-            <ColorBudgetSelector key={bgt.budget} pallete={pallete} deleteBudget={deleteBudget} bgt={bgt}/>
+            <ColorBudgetSelector key={bgt.budget} pallete={pallete} deleteBudget={deleteBudget} updateColor={updateColor} bgt={bgt}/>
          )}
 
       </ScrollView>
