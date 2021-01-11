@@ -43,7 +43,7 @@ import { FakeCurrencyInput } from 'react-native-currency-input';
 let db = firestore();
 
 
-const ColorBudgetSelector = ({pallete}) => {
+const ColorBudgetSelector = ({pallete, deleteBudget}) => {
 
    
 
@@ -120,7 +120,7 @@ const ColorBudgetSelector = ({pallete}) => {
          <>
             <TouchableOpacity
                style={styles.button}
-               onPress={()=>setIsEditing(true)}
+               onPress={()=>deleteBudget(budget)}
                style={{width:"10%"}}
             >
                <Icon
@@ -222,12 +222,12 @@ const Notes = ({user, navigation}) => {
       });
    }
 
-   const deleteColor = (color) =>{
+   const deleteBudget = (budget) =>{
       db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).delete()
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
-      navigation.goBack();
+      // navigation.goBack();
    }
 
    useEffect(() => {
@@ -362,7 +362,7 @@ const Notes = ({user, navigation}) => {
          </View>
       </View>
       <Content padder>
-         <ColorBudgetSelector pallete={pallete}/>
+         <ColorBudgetSelector pallete={pallete} deleteBudget={deleteBudget}/>
          
       </Content>
    </Container>
