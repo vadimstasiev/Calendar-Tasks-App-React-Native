@@ -15,13 +15,12 @@ import { FakeCurrencyInput } from 'react-native-currency-input';
 let db = firestore();
 
 
-const ColorBudgetSelector = ({pallete, deleteBudget}) => {
+const ColorBudgetSelector = ({pallete, deleteBudget, bgt}) => {
 
-   
 
-   const defaultBudget = 2323; // change later
-   const [budget, setBudget] = useState(defaultBudget);
-   const [color, setColor] = useState('#C0392B');
+
+   const [budget, setBudget] = useState(bgt.budget);
+   const [color, setColor] = useState(bgt.color);
    const [isEditing, setIsEditing] = useState(false);
    return <ListItem>
       {isEditing?
@@ -112,40 +111,36 @@ const Notes = ({user, navigation}) => {
 
    const [initializing, setInitializing] = useState(true)
 
-   
-   const [budget, setBudget] = useState(0); // will change to price budget
-   const [firestoreInput, setFirestoreInput] = useState();
+
+   const [budget, setBudget] = useState(0); 
+   const [budgets, setBudgets] = useState([]); 
 
    const pallete = [
       '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
       '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
-      '#FFFFFF', 
+      '#FFFFFF',
       '#BDC3C7', '#95A5A6', '#7F8C8D',
    ]
 
    const [color, setColor] = useState('#C0392B');
    const [isEditingColor, setIsEditingColor] = useState(false);
-   
-   // const [color, setColor] = useState(defaultMood);
-   const [firestoreMood, setFirestoreMood] = useState();
 
-   const [habits, setHabits] = useState([]);
-   const [habitsChecked, setHabitsChecked] = useState([]);
-   
-   const setSortHabbits = (inputHabbits) => {
-      // var temp = habits.slice(0);
-      setHabits([...inputHabbits.sort((a,b) => {
-         var x = a.id.toLowerCase();
-         var y = b.id.toLowerCase();
-         return x < y ? -1 : x > y ? 1 : 0;
-      })])
-  }
+
+
+//    const setSortHabbits = (inputHabbits) => {
+//       // var temp = habits.slice(0);
+//       setHabits([...inputHabbits.sort((a,b) => {
+//          var x = a.id.toLowerCase();
+//          var y = b.id.toLowerCase();
+//          return x < y ? -1 : x > y ? 1 : 0;
+//       })])
+//   }
 
 
    const addBudget = () => {
       console.log(user.uid, "budget")
       db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
-         color 
+         color
       })
       .catch((error) => {
          console.error("Error adding document: ", error);
@@ -164,30 +159,22 @@ const Notes = ({user, navigation}) => {
       let unsubscribe = () => {};
       setInitializing(true);
       try {
-         unsubscribe = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
-            // let data = await querySnapshot.data()
-            // if (data){
-            //    setFirestoreInput(data.message);
-            //    // setBudget(firestoreInput)
-            //    setFirestoreMood(data.color)
-            //    console.log(color)
-            //    if(color === defaultMood){
-            //       setColor(data.color);
-            //    }
-            //    setHabitsChecked(data.habitsChecked || [])
-            // }
+         unsubscribe = db.collection("users").doc(user.uid).collection("budget").onSnapshot( querySnapshot=>{
+            let temp = [];
+            querySnapshot.forEach((doc)=>{
+               temp.push({budget:doc.id, color: doc.data().color})
+            })
+            setBudgets(temp);
          })
       } catch (error) {
          console.log('Firestore error', error);
       }
-
-
       setInitializing(false);
       return () => {
          unsubscribe();
       }
-   }, [firestoreInput, firestoreMood]);
- 
+   }, []);
+
 
    if (initializing) return <View style={styles.loadingContainer}>
       <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
@@ -199,7 +186,7 @@ const Notes = ({user, navigation}) => {
       <View>
          <FakeCurrencyInput
             containerStyle={{width:"95%"}}
-            placeholder="Add a budget limit" 
+            placeholder="Add a budget limit"
             value={budget}
             unit="£"
             delimiter=","
@@ -213,11 +200,11 @@ const Notes = ({user, navigation}) => {
                padding: 10,
                marginTop:10,
                margin: 10,
-               width: "100%", 
+               width: "100%",
                fontSize:16,
             }}
          />
-         
+
          <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
                <ColorPalette
                   onChange={ color => {
@@ -250,11 +237,11 @@ const Notes = ({user, navigation}) => {
                padding: 10,
                marginTop:10,
                margin: 10,
-               width: "100%", 
+               width: "100%",
                fontSize:16,
             }}
          />
-         
+
          <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
                <ColorPalette
                   style = {{width:"100%"}}
@@ -266,7 +253,7 @@ const Notes = ({user, navigation}) => {
                   colors= {[color]}
                   icon={<Icon name="edit" size={16} color={color!=='#FFFFFF'?"white":"black"}></Icon>}
                />
-               <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', }} 
+               <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', }}
                   onPress={() => addBudget()}
                >
                   <Text>Add</Text>
@@ -275,8 +262,10 @@ const Notes = ({user, navigation}) => {
       </View>
       }
       <Content padder>
-         <ColorBudgetSelector pallete={pallete} deleteBudget={deleteBudget}/>
-         
+         {budgets.map(bgt => 
+            <ColorBudgetSelector pallete={pallete} deleteBudget={deleteBudget} bgt={bgt}/>
+         )}
+
       </Content>
    </Container>
 }
