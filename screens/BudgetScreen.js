@@ -183,7 +183,7 @@ const Notes = ({user, navigation}) => {
    const [initializing, setInitializing] = useState(true)
 
    
-   const [budget, setBudget] = useState(''); // will change to price budget
+   const [budget, setBudget] = useState(0); // will change to price budget
    const [firestoreInput, setFirestoreInput] = useState();
 
    const pallete = [
@@ -306,16 +306,15 @@ const Notes = ({user, navigation}) => {
          alignItems: "center"
       }}>
          <FakeCurrencyInput
-         containerStyle={{width:"60%"}}
-            placeholder="Add a budget limit"
+            // autoFocus={true}
+            containerStyle={{width:"60%"}}
+            // placeholder="Add a budget limit"
             value={budget}
-               onChangeValue={value => setBudget(value)}
-               unit="£"
-               delimiter=","
-               separator="."
-               precision={2}
-            //  value={title}
-             onChangeText={value => setBudget(value)}
+            unit="£"
+            delimiter=","
+            separator="."
+            precision={2}
+            onChangeValue={value => setBudget(value)}
             style={{
                borderWidth: 1,
                borderColor: "green",
@@ -327,6 +326,7 @@ const Notes = ({user, navigation}) => {
                fontSize:16,
             }}
          />
+         
          <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
          {isEditingColor?
             <>
