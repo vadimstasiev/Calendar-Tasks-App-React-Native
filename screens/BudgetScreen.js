@@ -10,6 +10,7 @@ import LoadingScreen from "./LoadingScreen";
 
 
 import { FakeCurrencyInput } from 'react-native-currency-input';
+import { ScrollView } from "react-native-gesture-handler";
 
 
 let db = firestore();
@@ -159,8 +160,14 @@ const Notes = ({user, navigation}) => {
          });
          setBudget(0)
       } else {
-         //show message
-         console.log('blyat')
+         Alert.alert(
+            'Error adding',
+            'The value that you have entered already exists!',
+            [
+              { text: 'OK', onPress: () => console.log('OK Pressed') }
+            ],
+            { cancelable: false }
+          );
       }
    }
 
@@ -278,12 +285,12 @@ const Notes = ({user, navigation}) => {
          </View>
       </View>
       }
-      <Content padder>
+      <ScrollView padder>
          {budgets.map(bgt => 
             <ColorBudgetSelector key={bgt.budget} pallete={pallete} deleteBudget={deleteBudget} bgt={bgt}/>
          )}
 
-      </Content>
+      </ScrollView>
    </Container>
 }
 
