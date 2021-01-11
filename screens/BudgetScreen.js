@@ -127,14 +127,14 @@ const Notes = ({user, navigation}) => {
 
 
 
-//    const setSortHabbits = (inputHabbits) => {
-//       // var temp = habits.slice(0);
-//       setHabits([...inputHabbits.sort((a,b) => {
-//          var x = a.id.toLowerCase();
-//          var y = b.id.toLowerCase();
-//          return x < y ? -1 : x > y ? 1 : 0;
-//       })])
-//   }
+   const setSortedBudgets = (budgets) => {
+      // var temp = habits.slice(0);
+      setBudgets([...budgets.sort((a,b) => {
+         var x = Number(a.budget);
+         var y = Number(b.budget);
+         return x < y ? -1 : x > y ? 1 : 0;
+      })])
+  }
 
 
    const addBudget = () => {
@@ -164,7 +164,7 @@ const Notes = ({user, navigation}) => {
             querySnapshot.forEach((doc)=>{
                temp.push({budget:doc.id, color: doc.data().color})
             })
-            setBudgets(temp);
+            setSortedBudgets(temp);
          })
       } catch (error) {
          console.log('Firestore error', error);
