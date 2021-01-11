@@ -138,9 +138,14 @@ const Notes = ({user, navigation}) => {
 
 
    const addBudget = () => {
+      const tempBudget = budget;
+      const tempColor = color;
       console.log(user.uid, "budget")
       db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
          color
+      })
+      .then(()=>{
+         setSortedBudgets([...budgets, {budget, color}])
       })
       .catch((error) => {
          console.error("Error adding document: ", error);
