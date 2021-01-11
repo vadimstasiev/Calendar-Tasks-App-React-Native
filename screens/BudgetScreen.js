@@ -143,7 +143,7 @@ const Notes = ({user, navigation}) => {
       console.log(user.uid, "budget")
       let budgetExists = false;
       budgets.map(bgt => {
-         if(bgt.budget===budget){
+         if(Number(bgt.budget)===Number(budget)){
             budgetExists=true;
          }
       })
@@ -157,8 +157,10 @@ const Notes = ({user, navigation}) => {
          .catch((error) => {
             console.error("Error adding document: ", error);
          });
+         setBudget(0)
       } else {
-         // show alert message
+         //show message
+         console.log('blyat')
       }
    }
 
