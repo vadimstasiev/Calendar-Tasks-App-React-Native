@@ -141,15 +141,25 @@ const Notes = ({user, navigation}) => {
       const tempBudget = budget;
       const tempColor = color;
       console.log(user.uid, "budget")
-      db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
-         color
+      let budgetExists = false;
+      budgets.map(bgt => {
+         if(bgt.budget===budget){
+            budgetExists=true;
+         }
       })
-      .then(()=>{
-         setSortedBudgets([...budgets, {budget, color}])
-      })
-      .catch((error) => {
-         console.error("Error adding document: ", error);
-      });
+      if(!budgetExists){
+         db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
+            color
+         })
+         .then(()=>{
+            setSortedBudgets([...budgets, {budget, color}])
+         })
+         .catch((error) => {
+            console.error("Error adding document: ", error);
+         });
+      } else {
+         // show alert message
+      }
    }
 
    const deleteBudget = (budget) =>{
@@ -268,7 +278,7 @@ const Notes = ({user, navigation}) => {
       }
       <Content padder>
          {budgets.map(bgt => 
-            <ColorBudgetSelector pallete={pallete} deleteBudget={deleteBudget} bgt={bgt}/>
+            <ColorBudgetSelector key={bgt.budget} pallete={pallete} deleteBudget={deleteBudget} bgt={bgt}/>
          )}
 
       </Content>
