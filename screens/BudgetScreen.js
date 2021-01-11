@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, Alert,TouchableOpacity, Button as RButton 
 import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Footer, FooterTab} from "native-base";
 import ColorPalette from 'react-native-color-palette';
 
-import Icon from "react-native-vector-icons/AntDesign";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 import auth, { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
@@ -118,18 +118,18 @@ const ColorBudgetSelector = ({pallete}) => {
          </>
       :
          <>
-            {/* <TouchableOpacity
+            <TouchableOpacity
                style={styles.button}
                onPress={()=>setIsEditing(true)}
                style={{width:"10%"}}
             >
                <Icon
-                  name={"edit"}
-                  size={20}
-                  color="#666666"
+                  name={"delete"}
+                  size={25}
+                  color="red"
                />
-            </TouchableOpacity> */}
-            <Card style={{width:"90%"}}>
+            </TouchableOpacity>
+            <Card style={{width:"80%"}}>
                   <FakeCurrencyInput
                      // autoFocus={true}
                      // style={{fontSize:20, width:'100%'}} 
@@ -183,7 +183,7 @@ const Notes = ({user, navigation}) => {
    const [initializing, setInitializing] = useState(true)
 
    
-   const [cost, setCost] = useState(''); // will change to price cost
+   const [budget, setBudget] = useState(''); // will change to price budget
    const [firestoreInput, setFirestoreInput] = useState();
 
    const pallete = [
@@ -214,7 +214,7 @@ const Notes = ({user, navigation}) => {
 
    const submit = (submitColor=color) => {
       console.log(user.uid, "budget")
-      db.collection("users").doc(user.uid).collection("budget").doc(String(cost)).set({
+      db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).set({
          color: submitColor, 
       })
       .catch((error) => {
@@ -223,7 +223,7 @@ const Notes = ({user, navigation}) => {
    }
 
    const deleteColor = (color) =>{
-      db.collection("users").doc(user.uid).collection("budget").doc(String(cost)).delete()
+      db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).delete()
       .catch((error) => {
          console.error("Error adding document: ", error);
       });
@@ -235,11 +235,11 @@ const Notes = ({user, navigation}) => {
       let unsubscribeDay = () => {};
       setInitializing(true);
       try {
-         unsubscribeDay = db.collection("users").doc(user.uid).collection("budget").doc(String(cost)).onSnapshot( async querySnapshot=>{
+         unsubscribeDay = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data()
             if (data){
                setFirestoreInput(data.message);
-               setCost(firestoreInput)
+               setBudget(firestoreInput)
                setFirestoreMood(data.color)
                console.log(color)
                if(color === defaultMood){
@@ -255,7 +255,7 @@ const Notes = ({user, navigation}) => {
 
       let unsubscribeHabbits = () => {};
       try {
-         unsubscribeHabbits = db.collection("users").doc(user.uid).collection("budget").doc(String(cost)).onSnapshot( async querySnapshot=>{
+         unsubscribeHabbits = db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data();
             let firebaseHabits = [];
             if (data) {
@@ -300,8 +300,14 @@ const Notes = ({user, navigation}) => {
                }}>Set the Cost Colors for the Calendar</Text>
         </Header> */}
         <View style={styles.usualExpense}>
-        <TextInput
+        <FakeCurrencyInput
           placeholder="Add a budget limit"
+          value={budget}
+            onChangeValue={value => setBudget(value)}
+            unit="£"
+            delimiter=","
+            separator="."
+            precision={2}
          //  value={title}
          //  onChangeText={value => setTitle(value)}
           style={{
@@ -309,6 +315,7 @@ const Notes = ({user, navigation}) => {
             borderColor: "green",
             borderRadius: 8,
             padding: 10,
+            marginTop:15,
             margin: 10,
             width: "95%", 
             fontSize:16,
@@ -343,9 +350,9 @@ const Notes = ({user, navigation}) => {
                   // colors={colorOptions}
                   titleStyles={{display:"none"}}
                   colors= {[color]}
-                  icon={<Icon name="edit" size={18} color="white"></Icon>}
+                  icon={<Icon name="edit" size={16} color={color!=='#FFFFFF'?"white":"black"}></Icon>}
                />
-               <Button style={{ marginLeft:40, borderRadius:50, width:"50%", backgroundColor: 'green', justifyContent: 'center', alignItems: 'center'}} 
+               <Button style={{ marginLeft:40, borderRadius:50, width:"50%", backgroundColor: '#2E8B57', justifyContent: 'center', alignItems: 'center'}} 
                   onPress={() => {}}
                >
                   <Text>Add</Text>
