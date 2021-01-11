@@ -299,6 +299,48 @@ const Notes = ({user, navigation}) => {
                   color: 'white',
                }}>Set the Cost Colors for the Calendar</Text>
         </Header> */}
+      {isEditingColor?
+      <View style={{
+         // flexDirection: "row",
+      //   width: "100%",
+      //   justifyContent: "center",
+         // alignItems: "center"
+      }}>
+         <FakeCurrencyInput
+            // autoFocus={true}
+            containerStyle={{width:"95%"}}
+            // placeholder="Add a budget limit"
+            value={budget}
+            unit="£"
+            delimiter=","
+            separator="."
+            precision={2}
+            onChangeValue={value => setBudget(value)}
+            style={{
+               borderWidth: 1,
+               borderColor: "green",
+               borderRadius: 8,
+               padding: 10,
+               marginTop:10,
+               margin: 10,
+               width: "100%", 
+               fontSize:16,
+            }}
+         />
+         
+         <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
+               <ColorPalette
+                  onChange={ color => {
+                     setColor(color);
+                     setIsEditingColor(false);
+                  }}
+                  value={color}
+                  titleStyles={{display:"none"}}
+                  colors= {pallete}
+               />
+         </View>
+      </View>
+      :
       <View style={{
          flexDirection: "row",
       //   width: "100%",
@@ -328,21 +370,6 @@ const Notes = ({user, navigation}) => {
          />
          
          <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
-         {isEditingColor?
-            <>
-               <ColorPalette
-                  onChange={ color => {
-                     setColor(color);
-                     setIsEditingColor(false);
-                  }}
-                  value={color}
-                  titleStyles={{display:"none"}}
-                  colors= {pallete}
-               />
-            </>
-         :
-            <>
-               {/* <Text style = {{ marginLeft:20 }}>{color}</Text> */}
                <ColorPalette
                   style = {{width:"100%"}}
                   onChange={ color => {
@@ -353,15 +380,14 @@ const Notes = ({user, navigation}) => {
                   colors= {[color]}
                   icon={<Icon name="edit" size={16} color={color!=='#FFFFFF'?"white":"black"}></Icon>}
                />
-               <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', alignItems: 'center'}} 
+               <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', }} 
                   onPress={() => {}}
                >
                   <Text>Add</Text>
                </Button>
-            </>
-         }
          </View>
       </View>
+      }
       <Content padder>
          <ColorBudgetSelector pallete={pallete} deleteBudget={deleteBudget}/>
          
