@@ -34,10 +34,10 @@ import Svg, {
   Pattern,
   Mask,
 } from "react-native-svg";
-import { sub } from "react-native-reanimated";
+import { set, sub } from "react-native-reanimated";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-import { FakeCurrencyInput } from 'react-native-currency-input';
+import CurrencyInput, { FakeCurrencyInput } from 'react-native-currency-input';
 
 
 let db = firestore();
@@ -288,7 +288,7 @@ const Notes = ({user, navigation}) => {
       <LoadingScreen backgroundColor={'white'} color={'#6aab6a'}/>
    </View>
 
-   return <Container>
+   return <Container style={{width:"100%"}}>
          {/* <Header style={{backgroundColor:'#2E8B57'}}>
             <Text style={{
                   textAlign: 'center',
@@ -299,60 +299,61 @@ const Notes = ({user, navigation}) => {
                   color: 'white',
                }}>Set the Cost Colors for the Calendar</Text>
         </Header> */}
-        <View style={styles.usualExpense}>
-        <FakeCurrencyInput
-          placeholder="Add a budget limit"
-          value={budget}
-            onChangeValue={value => setBudget(value)}
-            unit="£"
-            delimiter=","
-            separator="."
-            precision={2}
-         //  value={title}
-         //  onChangeText={value => setTitle(value)}
-          style={{
-            borderWidth: 1,
-            borderColor: "green",
-            borderRadius: 8,
-            padding: 10,
-            marginTop:15,
-            margin: 10,
-            width: "95%", 
-            fontSize:16,
-         }}
-        />
-         <View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'center', paddingLeft:14}}>
+      <View style={{
+         flexDirection: "row",
+      //   width: "100%",
+      //   justifyContent: "center",
+         alignItems: "center"
+      }}>
+         <FakeCurrencyInput
+         containerStyle={{width:"60%"}}
+            placeholder="Add a budget limit"
+            value={budget}
+               onChangeValue={value => setBudget(value)}
+               unit="£"
+               delimiter=","
+               separator="."
+               precision={2}
+            //  value={title}
+             onChangeText={value => setBudget(value)}
+            style={{
+               borderWidth: 1,
+               borderColor: "green",
+               borderRadius: 8,
+               padding: 10,
+               marginTop:10,
+               margin: 10,
+               width: "100%", 
+               fontSize:16,
+            }}
+         />
+         <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
          {isEditingColor?
             <>
                <ColorPalette
                   onChange={ color => {
                      setColor(color);
                      setIsEditingColor(false);
-                     // submit(color);
                   }}
                   value={color}
-                  // colors={colorOptions}
                   titleStyles={{display:"none"}}
                   colors= {pallete}
                />
             </>
          :
             <>
-               <Text style = {{ marginLeft:20 }}>{color}</Text>
+               {/* <Text style = {{ marginLeft:20 }}>{color}</Text> */}
                <ColorPalette
                   style = {{width:"100%"}}
                   onChange={ color => {
                      setIsEditingColor(true)
-                     // setColor(color);
-                     // submit(color);
                   }}
                   value={color}
-                  // colors={colorOptions}
                   titleStyles={{display:"none"}}
                   colors= {[color]}
                   icon={<Icon name="edit" size={16} color={color!=='#FFFFFF'?"white":"black"}></Icon>}
                />
-               <Button style={{ marginLeft:40, borderRadius:50, width:"50%", backgroundColor: '#2E8B57', justifyContent: 'center', alignItems: 'center'}} 
+               <Button style={{  borderRadius:5, width:"40%", height:52, backgroundColor: '#2E8B57', justifyContent: 'center', alignItems: 'center'}} 
                   onPress={() => {}}
                >
                   <Text>Add</Text>
