@@ -56,16 +56,6 @@ const testIDs = {
 const CalendarsScreen = ({navigation, user}) => {
 
   navigation.setOptions({ title: `Calendar` });
-  // const defaultColor = "white";
-  // const colorOptions = ['#3a402a', '#688052', '#6aab6a', '#d9b358', '#fff2a7'];
-  // let defaultMood = 'None';
-  // const moods = {
-  //    '#fff2a7':'Awesome',
-  //    '#d9b358':'Good',
-  //    '#6aab6a':'Fine',
-  //    '#688052':'Bad',
-  //    '#3a402a':'Terrible'
-  // }
 
 
   const dayPress = (dayData) => {
@@ -80,35 +70,82 @@ const CalendarsScreen = ({navigation, user}) => {
          {/* <Text style={styles.text}>Calendar with period marking and dot marking</Text> */}
          <Calendar
             current={getCurrentDate()}
-            // minDate={'2021-01-01'}
-            // disabledDaysIndexes={[0, 6]}
             onDayPress={dayPress}
-            markingType={'period'}
+            markingType={'custom'}
             markedDates={{
-            [getCurrentDate()]: {marked: true, dotColor: '#50cebb'}, 
-            '2021-05-14': {marked: true, dotColor: '#50cebb'},
-            '2021-05-15': {marked: true, dotColor: 'red'},
-            '2021-01-16': {marked: true, dotColor: '#50cebb'},
-            '2021-01-21': {startingDay: true, color: '#50cebb', textColor: 'white'},
-            '2021-01-22': {
-               color: '#70d7c7',
-               customTextStyle: {
-                  color: '#FFFAAA',
-                  fontWeight: '700'
-               }
+            [getCurrentDate()]: {
+              customStyles: {
+                container: {
+                  backgroundColor: 'white',
+                  elevation: 2
+                },
+                text: {
+                  color: 'red'
+                }
+              }
+            }, 
+            '2021-01-08': {
+              selected: true
             },
-            '2021-01-23': {color: '#70d7c7', textColor: 'white', marked: true, dotColor: 'white'},
-            '2021-01-24': {color: '#70d7c7', textColor: 'white'},
-            '2021-01-25': {
-               endingDay: true,
-               color: '#50cebb',
-               textColor: 'white',
-               customContainerStyle: {
-                  borderTopRightRadius: 5,
-                  borderBottomRightRadius: 5
-               }
+            '2021-01-09': {
+              customStyles: {
+                container: {
+                  backgroundColor: 'red',
+                  elevation: 4
+                },
+                text: {
+                  color: 'white'
+                }
+              }
             },
-            // ...getDisabledDates('2021-01-01', '2021-01-30', [0, 6])
+            '2021-01-14': {
+              customStyles: {
+                container: {
+                  backgroundColor: 'green'
+                },
+                text: {
+                  color: 'white'
+                }
+              }
+            },
+            '2021-01-15': {
+              customStyles: {
+                container: {
+                  backgroundColor: 'black',
+                  elevation: 2
+                },
+                text: {
+                  color: 'yellow'
+                }
+              }
+            },
+            '2021-01-21': {
+              disabled: true
+            },
+            '2021-01-28': {
+              customStyles: {
+                text: {
+                  color: 'black',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            '2021-01-30': {
+              customStyles: {
+                container: {
+                  backgroundColor: 'pink',
+                  elevation: 4,
+                  borderColor: 'purple',
+                  borderWidth: 5
+                },
+                text: {
+                  marginTop: 3,
+                  fontSize: 11,
+                  color: 'black'
+                }
+              }
+            },
+            
             }
             }
          />
