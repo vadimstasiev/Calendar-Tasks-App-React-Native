@@ -4,9 +4,10 @@ import moment from 'moment';
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 
-import React, {useState, Fragment} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {Calendar} from 'react-native-calendars';
+import { set } from 'react-native-reanimated';
 
 let db = firestore();
 
@@ -36,11 +37,18 @@ const testIDs = {
   weekCalendar: {CONTAINER: 'weekCalendar'}
 };
 
- const getCurrentDate=()=>{
 
-  var date = new Date().getDate();
-  var month = new Date().getMonth() + 1;
-  var year = new Date().getFullYear();
+
+const CalendarsScreen = ({navigation, user}) => {
+
+  navigation.setOptions({ title: `Calendar` });
+
+  const [currentMonth, setCurrentMonth] = useState(String(new Date().getMonth() + 1))
+
+  const [budgets, setBudgets] = useState([]); 
+
+  const [days, setDays] = useState([])
+
 
   const convertTwoDigit = (digit) => {
     if (digit.toString().length == 1) {
@@ -49,26 +57,106 @@ const testIDs = {
     return digit;
   }
 
-  // return '2012-05-16';
-  return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(date);//format: yyyy-mm-dd;
-}
+  const getCurrentDate=()=>{
+    var day = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
 
-const CalendarsScreen = ({navigation, user}) => {
+    // return '2012-05-16';
+    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day);//format: yyyy-mm-dd;
+  }
 
-  navigation.setOptions({ title: `Calendar` });
+  const getDate=(day)=>{
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
 
+    // return '2012-05-16';
+    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day);//format: yyyy-mm-dd;
+  }
 
   const dayPress = (dayData) => {
     console.log(dayData)
     const {day, month} = dayData;
     navigation.navigate('Day', {user, day: String(day), month: String(month)})
   }
+
+  const setSortedBudgets = (budgets) => {
+    // var temp = habits.slice(0);
+    setBudgets([...budgets.sort((a,b) => {
+       var x = Number(a.budget);
+       var y = Number(b.budget);
+       return x < y ? -1 : x > y ? 1 : 0;
+    })])
+  }
+
+  const calculateColor = (budget) => {
+    let color = 'default';
+    budgets.map(bgt => {
+      if (budget>=bgt.budget){
+        color = bgt.color;
+      }  
+    })
+    console.log(color)
+    return color;
+  }
   
-  const renderCalendarWithPeriodMarkingAndDotMarking = () => {
-      return (
-      <Fragment>
-         {/* <Text style={styles.text}>Calendar with period marking and dot marking</Text> */}
-         <Calendar
+  useEffect(() => {
+    // get filtering colors for days 
+    let unsubscribe1 = () => {};
+    try {
+        unsubscribe = db.collection("users").doc(user.uid).collection("budget").onSnapshot( querySnapshot=>{
+          let temp = [];
+          querySnapshot.forEach((doc)=>{
+              temp.push({budget:doc.id, color: doc.data().color})
+          })
+          setSortedBudgets(temp);
+        })
+    } catch (error) {
+        console.log('Firestore error', error);
+    }
+    // get daily costs from month Collection
+    try {
+      unsubscribe2 = db.collection("users").doc(user.uid).collection(currentMonth).onSnapshot( querySnapshot=>{
+        let temp = [];
+        querySnapshot.forEach((doc)=>{
+            temp.push({day:doc.id, totalCost: doc.data().totalCost})
+        })
+        setDays(temp);
+      })
+  } catch (error) {
+      console.log('Firestore error', error);
+  }
+    return () => {
+        unsubscribe1();
+        unsubscribe2();
+    }
+  }, [])
+
+  const generateCalendarData = () => {
+    const data = {}
+    days.map(day => {
+      const color = calculateColor(day.totalCost);
+      data[getDate(day.day)] = {
+        customStyles: {
+          container: {
+            backgroundColor: color=='default'?'#ffffff':color,
+            elevation: 4
+          },
+          text: {
+            color: color=='default'?'#000000':"#ffffff"
+          }
+        }
+      }
+    })
+    return data;
+  }
+ 
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} testID={testIDs.calendars.CONTAINER}>
+      {console.log(budgets)}
+      {console.log(days)}
+      <Calendar
             current={getCurrentDate()}
             onDayPress={dayPress}
             markingType={'custom'}
@@ -84,80 +172,12 @@ const CalendarsScreen = ({navigation, user}) => {
                 }
               }
             }, 
-            '2021-01-08': {
-              selected: true
-            },
-            '2021-01-09': {
-              customStyles: {
-                container: {
-                  backgroundColor: 'red',
-                  elevation: 4
-                },
-                text: {
-                  color: 'white'
-                }
-              }
-            },
-            '2021-01-14': {
-              customStyles: {
-                container: {
-                  backgroundColor: 'green'
-                },
-                text: {
-                  color: 'white'
-                }
-              }
-            },
-            '2021-01-15': {
-              customStyles: {
-                container: {
-                  backgroundColor: 'black',
-                  elevation: 2
-                },
-                text: {
-                  color: 'yellow'
-                }
-              }
-            },
-            '2021-01-21': {
-              disabled: true
-            },
-            '2021-01-28': {
-              customStyles: {
-                text: {
-                  color: 'black',
-                  fontWeight: 'bold'
-                }
-              }
-            },
-            '2021-01-30': {
-              customStyles: {
-                container: {
-                  backgroundColor: 'pink',
-                  elevation: 4,
-                  borderColor: 'purple',
-                  borderWidth: 5
-                },
-                text: {
-                  marginTop: 3,
-                  fontSize: 11,
-                  color: 'black'
-                }
-              }
-            },
+            ...generateCalendarData(),
             
             }
             }
+            onMonthChange={(data)=>setCurrentMonth(String(data.month))}
          />
-      </Fragment>
-      );
-   };
-
- 
-
-  return (
-    <ScrollView showsVerticalScrollIndicator={false} testID={testIDs.calendars.CONTAINER}>
-      {renderCalendarWithPeriodMarkingAndDotMarking()}
     </ScrollView>
   );
 };
