@@ -1,4 +1,4 @@
-package com.whatever;
+package com.pocket;
 
 import android.os.Bundle;
 

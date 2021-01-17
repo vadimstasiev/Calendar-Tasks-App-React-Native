@@ -1,4 +1,4 @@
-package com.whatever.generated;
+package com.pocket.generated;
 
 import java.util.Arrays;
 import java.util.List;
