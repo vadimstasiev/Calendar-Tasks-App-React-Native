@@ -1,307 +1,114 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import {
+  Text,
   ScrollView,
   View,
   SafeAreaView,
-  Platform,
+  TextInput,
 } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
-import { TextField } from 'react-native-material-textfield';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 let db = firestore();
 
-let styles = {
-  scroll: {
-    backgroundColor: 'transparent',
-  },
 
-  container: {
-    margin: 8,
-    marginTop: Platform.select({ ios: 8, android: 32 }),
-    flex: 1,
-  },
-
-  contentContainer: {
-    padding: 8,
-  },
-
-  buttonContainer: {
-    paddingTop: 8,
-    margin: 8,
-  },
-
-  safeContainer: {
-    flex: 1,
-    backgroundColor: '#E8EAF6',
-  },
-};
-
-class RegisterScreen extends Component {
+const RegisterScreen =({navigation})=> {
  
-    constructor(props) {
-        super(props);
 
-        this.navigation = props.navigation;
-
-        this.onFocus = this.onFocus.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-        this.onChangeText = this.onChangeText.bind(this);
-        this.onSubmitFirstName = this.onSubmitFirstName.bind(this);
-        this.onSubmitEmail = this.onSubmitEmail.bind(this);
-        this.onSubmitPassword = this.onSubmitPassword.bind(this);
-        this.onSubmitConfirmPassword = this.onSubmitConfirmPassword.bind(this);
-        this.onAccessory1Press = this.onAccessory1Press.bind(this);
-        this.onAccessory2Press = this.onAccessory2Press.bind(this);
-
-        this.firstnameRef = this.updateRef.bind(this, 'firstname');
-        this.emailRef = this.updateRef.bind(this, 'email');
-        this.passwordRef = this.updateRef.bind(this, 'password');
-        this.confirmPasswordRef = this.updateRef.bind(this, 'confirmPassword');
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [errors, setErrors] = useState({})
 
 
-        this.renderPasswordAccessory1 = this.renderPasswordAccessory1.bind(this);
-        this.renderPasswordAccessory2 = this.renderPasswordAccessory2.bind(this);
+    const onSubmit = async () => {
+      let tempErrors = {};
 
-        this.state = {
-        secureTextEntry1: true,
-        secureTextEntry2: true,
-        };
-    }
-
-    onFocus() {
-        let { errors = {} } = this.state;
-
-        for (let name in errors) {
-        let ref = this[name];
-
-        if (ref && ref.isFocused()) {
-            delete errors[name];
-        }
-        }
-
-        this.setState({ errors });
-    }
-
-    onChangeText(text) {
-        ['firstname', 'email', 'password', 'confirmPassword']
-        .map((name) => ({ name, ref: this[name] }))
-        .forEach(({ name, ref }) => {
-            if (ref.isFocused()) {
-            this.setState({ [name]: text });
-            }
-        });
-    }
-
-    onAccessory1Press() {
-        this.setState(({ secureTextEntry1 }) => ({ secureTextEntry1: !secureTextEntry1 }));
-    }
-
-    onAccessory2Press() {
-      this.setState(({ secureTextEntry2 }) => ({ secureTextEntry2: !secureTextEntry2 }));
-    }
-
-    onSubmitFirstName() {
-        this.email.focus();
-    }
-
-    onSubmitEmail() {
-        this.password.focus();
-    }
-
-    onSubmitPassword() {
-      this.confirmPassword.focus();
-    }
-
-    onSubmitConfirmPassword() {
-      this.confirmPassword.blur();
-    }
-
-    async onSubmit() {
-        let errors = {};
-
-        ['firstname', 'email', 'password', 'confirmPassword']
-        .forEach((name) => {
-            let value = this[name].value();
-
-            if (!value) {
-            errors[name] = 'Should not be empty';
-            } else {
-            
-            if ('email' === name){
-              if (! (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value))) {
-                errors[name] = "Invalid format";
-              }
-            }
-            if ('password' === name && value.length < 8) {
-              errors[name] = 'Too short';
-            }
-          }
-        });
-
-        if (this['password'].value() !== this['confirmPassword'].value()) {
-          errors['confirmPassword'] = 'Passwords don\'t match'
-        }
-        if(Object.keys(errors).length === 0){
+      if (email!=='' && password!=='' && confirmPassword===password) {
           await auth()
-            .createUserWithEmailAndPassword(this['email'].value(), this['password'].value())
-            .then(async() => {
-              let currentUser = auth().currentUser;
-              await db.collection("users").doc(currentUser.uid).set({
-                displayName: this['firstname'].value(),
-                email: currentUser.email
-              })
-              this.navigation.navigate('Home');
+          .createUserWithEmailAndPassword(email, password)
+          .then(async() => {
+            let currentUser = auth().currentUser;
+            await db.collection("users").doc(currentUser.uid).set({
+              displayName: username,
+              email: currentUser.email
             })
-            .catch(error => {
-              if (error.code === 'auth/email-already-in-use') {
-                errors['email'] = 'Email already in use';
-              }
-              else if (error.code === 'auth/invalid-email') {
-                errors['email'] = "Invalid format";
-              }
-              else {
-                console.log(error);
-              }
-            });
-        }
-        this.setState({ errors });
+            navigation.navigate('Home');
+          })
+          .catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+              tempErrors['email'] = 'Email already in use';
+            }
+            else if (error.code === 'auth/invalid-email') {
+              tempErrors['email'] = "Invalid format";
+            }
+            else {
+              tempErrors['other'] = error.toString()
+            }
+          });
+      } else if (confirmPassword!==password) {
+        tempErrors['confirmPassword'] = "Passwords do not match!";
+      }
+      setErrors(tempErrors);
     }
 
-    updateRef(name, ref) {
-        this[name] = ref;
-    }
-
-    renderPasswordAccessory1() {
-        let { secureTextEntry1 } = this.state;
-
-        let name = secureTextEntry1?
-        'visibility':
-        'visibility-off';
-
-        return (
-        <MaterialIcon
-            size={24}
-            name={name}
-            color={TextField.defaultProps.baseColor}
-            onPress={this.onAccessory1Press}
-            suppressHighlighting={true}
-        />
-        );
-    }
-
-    renderPasswordAccessory2() {
-      let { secureTextEntry2 } = this.state;
-
-      let name = secureTextEntry2?
-      'visibility':
-      'visibility-off';
-
-      return (
-      <MaterialIcon
-          size={24}
-          name={name}
-          color={TextField.defaultProps.baseColor}
-          onPress={this.onAccessory2Press}
-          suppressHighlighting={true}
-      />
-      );
-  }
-
-    render() {
-        let { errors = {}, secureTextEntry1, secureTextEntry2, ...data } = this.state;
-        let { firstname, lastname } = data;
-
-        return (
-        <SafeAreaView style={styles.safeContainer}>
+    return (
+        <SafeAreaView >
             <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.contentContainer}
             keyboardShouldPersistTaps='handled'
             >
-            <View style={styles.container}>
-                <TextField
-                ref={this.firstnameRef}
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                onFocus={this.onFocus}
-                onChangeText={this.onChangeText}
-                onSubmitEditing={this.onSubmitFirstName}
-                returnKeyType='next'
-                label='First Name'
-                title='Used name within the app'
-                error={errors.firstname}
+            <View>
+                <TextInput
+                style={{margin:10, borderColor:'black', borderWidth:1}}
+                onChangeText={text=>setUsername(text)}
+                placeholder='username'
                 />
-
-
-                <TextField
-                ref={this.emailRef}
-                keyboardType='email-address'
-                autoCapitalize='none'
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                onFocus={this.onFocus}
-                onChangeText={this.onChangeText}
-                onSubmitEditing={this.onSubmitEmail}
-                returnKeyType='next'
-                label='Email Address'
-                error={errors.email}
+                <Text></Text>
+                <TextInput
+                style={{margin:10, borderColor:'black', borderWidth:1}}
+                onChangeText={text=>setEmail(text)}
+                placeholder='Email Address'
                 />
-
-                <TextField
-                ref={this.passwordRef}
-                secureTextEntry={secureTextEntry1}
-                autoCapitalize='none'
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                clearTextOnFocus={false}
-                onFocus={this.onFocus}
-                onChangeText={this.onChangeText}
-                onSubmitEditing={this.onSubmitPassword}
-                returnKeyType='done'
-                label='Password'
-                error={errors.password}
-                title='Choose wisely'
-                maxLength={40}
-                characterRestriction={40}
-                renderRightAccessory={this.renderPasswordAccessory1}
+                {errors.email!==''?
+                <Text style={{color:'red'}}>{errors.email}</Text>
+                :<></>
+                }
+                <TextInput
+                style={{margin:10, borderColor:'black', borderWidth:1}}
+                onChangeText={text=>setPassword(text)}
+                placeholder='Password Field'
                 />
-
-                <TextField
-                ref={this.confirmPasswordRef}
-                secureTextEntry={secureTextEntry2}
-                autoCapitalize='none'
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                clearTextOnFocus={false}
-                onFocus={this.onFocus}
-                onChangeText={this.onChangeText}
-                onSubmitEditing={this.onSubmitConfirmPassword}
-                returnKeyType='done'
-                label='Confirm Password'
-                error={errors.confirmPassword}
-                title='Choose wisely'
-                maxLength={40}
-                characterRestriction={40}
-                renderRightAccessory={this.renderPasswordAccessory2}
+                {errors.password!==''?
+                <Text style={{color:'red'}}>{errors.password}</Text>
+                :<></>
+                }
+                <TextInput
+                style={{margin:10, borderColor:'black', borderWidth:1}}
+                onChangeText={text=>setConfirmPassword(text)}
+                placeholder='Confirm Password Field'
                 />
-
+                {errors.password!==''?
+                <Text style={{color:'red'}}>{errors.confirmPassword}</Text>
+                :<></>
+                }
             </View>
-
-            <View style={styles.buttonContainer}>
+            <View>
                 <RaisedTextButton
-                onPress={this.onSubmit}
-                title='submit'
-                color={TextField.defaultProps.tintColor}
-                titleColor='white'
+                onPress={()=>onSubmit()}
+                style={{margin:10, backgroundColor:'green', borderWidth:1}}
+                titleColor={'white'}
+                title="Submit"
                 />
+                {errors.other!==''?
+                <Text style={{color:'red'}}>{errors.other}</Text>
+                :<></>
+                }
             </View>
             </ScrollView>
         </SafeAreaView>
         );
     }
-}
 
 export default RegisterScreen;

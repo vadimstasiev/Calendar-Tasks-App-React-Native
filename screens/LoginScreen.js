@@ -37,7 +37,7 @@ const LoginScreen =({navigation})=> {
                         tempErrors['password'] = "Wrong Password";
                     }
                     else {
-                        tempErrors['other'] = toString(error)
+                        tempErrors['other'] = error.toString()
                     }
                 }
             );
