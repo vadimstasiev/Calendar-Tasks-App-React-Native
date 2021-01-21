@@ -65,7 +65,6 @@ const CalendarsScreen = ({navigation, user}) => {
 
   // action when clicking a day
   const dayPress = (dayData) => {
-    console.log(dayData)
     const {day, month} = dayData;
     navigation.navigate('Day', {user, day: String(day), month: String(month)})
   }
@@ -87,7 +86,6 @@ const CalendarsScreen = ({navigation, user}) => {
         color = bgt.color;
       }  
     })
-    console.log(color)
     return color;
   }
   
@@ -142,12 +140,9 @@ const CalendarsScreen = ({navigation, user}) => {
     })
     return data;
   }
- 
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} testID={testIDs.calendars.CONTAINER}>
-      {console.log(budgets)}
-      {console.log(days)}
       <Calendar
             current={getCurrentDate()}
             onDayPress={dayPress}

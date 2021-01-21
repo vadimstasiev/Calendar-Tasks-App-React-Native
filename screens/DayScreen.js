@@ -176,7 +176,6 @@ const DayScreen = ({route, navigation}) => {
 
   // function to add expense object in expense list
   const addExpense = async () => {
-     console.log((titleDescription.length ))
       if (titleDescription.length > 0 && titlePrice!==null) {
          let sendToFirestoreexpenses = {}
          let description=titleDescription;
@@ -223,7 +222,6 @@ const DayScreen = ({route, navigation}) => {
          unsubscribe1 = db.collection("users").doc(user.uid).collection(month).doc(day).onSnapshot( async querySnapshot=>{
             let data = await querySnapshot.data()
             let firebaseExpenses = []
-             console.log('data', data)
             if (data) {
                for (const id in data) {
                   if(id!=="totalCost"){
@@ -239,12 +237,10 @@ const DayScreen = ({route, navigation}) => {
             })
             localTotalCost = Math.round(localTotalCost * 100) / 100
             setTotalCost(localTotalCost);
-            console.log('localTotalCost', localTotalCost)
             db.collection("users").doc(user.uid).collection(month).doc(day).update({totalCost:localTotalCost})
             .catch((error) => {
                console.error("Error setting total cost: ", error);
             });
-            console.log('firebase', firebaseExpenses)
             setSortExpenses([...expenses, ...firebaseExpenses]);
          }
          })
@@ -265,7 +261,6 @@ const DayScreen = ({route, navigation}) => {
             firebaseUsualExpenses.map((usualExpense) => {
                localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
             })
-            console.log(firebaseUsualExpenses)
             setUsualExpenses([...usualExpenses, ...firebaseUsualExpenses]);
          }
          })
@@ -291,7 +286,6 @@ const DayScreen = ({route, navigation}) => {
       if (query) {
       // Making a case insensitive regular expression
       const regex = new RegExp(`${query.trim()}`, 'i');
-      console.log(regex)
       // Setting the filtered film array according the query
       setFilteredUsualExpenses(
             usualExpenses.filter((expense) => String(expense.description).search(regex) >= 0)

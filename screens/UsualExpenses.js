@@ -129,7 +129,6 @@ const usualExpensesScreen = ({navigation, user}) => {
          }
          let temp = {}
          for (let usualExpense in usualExpenses){
-            console.log('usualExpense', usualExpenses[usualExpense])
             temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].description;
          }
 
@@ -169,7 +168,6 @@ const usualExpensesScreen = ({navigation, user}) => {
             unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
                let data = await querySnapshot.data()
                let firebaseusualExpenses = []
-               console.log('data', data)
                if (data) {
                   for (const id in data) {
                      const description = data[id];
@@ -179,7 +177,6 @@ const usualExpensesScreen = ({navigation, user}) => {
                firebaseusualExpenses.map((usualExpense) => {
                   localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
                })
-               console.log(firebaseusualExpenses)
                setSortExpenses([...usualExpenses, ...firebaseusualExpenses]);
             }
             })

@@ -6,7 +6,6 @@
     "web": "expo start --web",
     "start": "react-native run-android",
     "test": "jest",
-    "postinstall": "patch-package",
     "release": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
@@ -22,8 +21,6 @@
     "expo-status-bar": "~1.0.2",
     "expo-updates": "~0.3.2",
     "native-base": "^2.13.14",
-    "patch-package": "^6.2.2",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
@@ -34,14 +31,11 @@
     "react-native-currency-input": "^0.1.2",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-material-dropdown-v2": "^0.11.1",
-    "react-native-material-textfield": "^0.16.1",
     "react-native-paper": "^4.4.1",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.15.0",
     "react-native-spinkit": "^1.5.1",
-    "react-native-svg": "^12.1.0",
-    "react-native-svg-uri": "^1.2.3",
     "react-native-unimodules": "~0.11.0",
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.3"

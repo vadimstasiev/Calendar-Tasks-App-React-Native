@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TextInput, Alert,TouchableOpacity, Button as RButton } from "react-native";
-import { Container, Header, Body, Text, Form, Textarea, Button, Item, Label, Input, Card, CardItem, Content, ListItem, CheckBox, Footer, FooterTab} from "native-base";
+import { View, StyleSheet, Alert,TouchableOpacity } from "react-native";
+import { Container, Text, Form, Button, Card, CardItem, ListItem} from "native-base";
 import ColorPalette from 'react-native-color-palette';
-
 import Icon from "react-native-vector-icons/MaterialIcons";
-
 import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "./LoadingScreen";
-
-
 import { FakeCurrencyInput } from 'react-native-currency-input';
 import { ScrollView } from "react-native-gesture-handler";
 
 
 let db = firestore();
 
-
 const ColorBudgetSelector = ({pallete, deleteBudget, updateColor, bgt}) => {
-
-
-
    const [budget, setBudget] = useState(bgt.budget);
    const [color, setColor] = useState(bgt.color);
    const [isEditing, setIsEditing] = useState(false);
@@ -116,26 +108,18 @@ const ColorBudgetSelector = ({pallete, deleteBudget, updateColor, bgt}) => {
 }
 
 const Notes = ({user, navigation}) => {
-
    const [initializing, setInitializing] = useState(true)
-
-
    const [budget, setBudget] = useState(0); 
    const [budgets, setBudgets] = useState([]); 
-
    const pallete = [
       '#C0392B', '#E74C3C', '#9B59B6', '#8E44AD', '#2980B9', '#3498DB', '#1ABC9C',
       '#16A085', '#27AE60', '#2ECC71', '#F1C40F', '#F39C12', '#E67E22', '#D35400',
       '#FFFFFF', '#BDC3C7', '#95A5A6', '#7F8C8D'
    ]
-
    const [color, setColor] = useState('#C0392B');
    const [isEditingColor, setIsEditingColor] = useState(false);
 
-
-
    const setSortedBudgets = (budgets) => {
-      // var temp = habits.slice(0);
       setBudgets([...budgets.sort((a,b) => {
          var x = Number(a.budget);
          var y = Number(b.budget);
@@ -143,11 +127,7 @@ const Notes = ({user, navigation}) => {
       })])
   }
 
-
    const addBudget = () => {
-      const tempBudget = budget;
-      const tempColor = color;
-      console.log(user.uid, "budget")
       let budgetExists = false;
       budgets.map(bgt => {
          if(Number(bgt.budget)===Number(budget)){
@@ -188,9 +168,6 @@ const Notes = ({user, navigation}) => {
       return db.collection("users").doc(user.uid).collection("budget").doc(String(budget)).update({
          color
       })
-      // .catch((error) => {
-      //    console.error("Error updating document: ", error);
-      // });
    }
 
    useEffect(() => {
@@ -220,7 +197,6 @@ const Notes = ({user, navigation}) => {
    </View>
 
    return <Container style={{width:"100%"}}>
-
       {isEditingColor?
       <View>
          <FakeCurrencyInput
@@ -281,7 +257,6 @@ const Notes = ({user, navigation}) => {
                fontSize:16,
             }}
          />
-
          <View style={{flexDirection:'row',  alignItems: 'center', paddingLeft:14}}>
                <ColorPalette
                   style = {{width:"100%"}}
@@ -305,7 +280,6 @@ const Notes = ({user, navigation}) => {
          {budgets.map(bgt => 
             <ColorBudgetSelector key={bgt.budget} pallete={pallete} deleteBudget={deleteBudget} updateColor={updateColor} bgt={bgt}/>
          )}
-
       </ScrollView>
    </Container>
 }
