@@ -24,7 +24,7 @@ const LoginScreen =({navigation})=> {
     const onSubmit = async () => {
         let tempErrors = {};
 
-        if (email!=='' && password.length!==''){
+        if (email!=='' && password!==''){
             await auth().signInWithEmailAndPassword(email, password)
                 .then(() => {
                     navigation.navigate('Home');
@@ -42,8 +42,7 @@ const LoginScreen =({navigation})=> {
                 }
             );
         }
-        console.log(errors)
-        setErrors({ tempErrors });
+        setErrors(tempErrors);
     }
 
     return (
