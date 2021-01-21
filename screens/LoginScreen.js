@@ -14,8 +14,6 @@ import { RaisedTextButton } from 'react-native-material-buttons';
 
 
 const LoginScreen =({navigation})=> {
- 
-
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState({})
@@ -23,7 +21,6 @@ const LoginScreen =({navigation})=> {
 
     const onSubmit = async () => {
         let tempErrors = {};
-
         if (email!=='' && password!==''){
             await auth().signInWithEmailAndPassword(email, password)
                 .then(() => {

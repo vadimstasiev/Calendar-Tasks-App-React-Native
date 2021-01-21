@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import firestore from "@react-native-firebase/firestore";
-
 import {
   StyleSheet,
   Text,
@@ -11,15 +10,14 @@ import {
   TouchableOpacity,
   Alert
 } from "react-native";
-import { Container, Header, Content, Card, CardItem,  Body, } from 'native-base';
+import { Card, CardItem,  Body } from 'native-base';
 import Icon from "react-native-vector-icons/AntDesign";
 import LoadingScreen from "./LoadingScreen";
-
 import { firebase } from "@react-native-firebase/auth";
-
 
 let db = firestore();
 
+// Item list component that is used for generating every individual list component
 const ItemList = (props) => {
    const [isEditing, setIsEditing] = useState('false');
    const [usualExpense, setusualExpense] = useState(props.usualExpense)
@@ -62,7 +60,6 @@ const ItemList = (props) => {
                name={"edit"}
                size={20}
                color="#666666"
-               // onPress={() => props.checkusualExpense(props.usualExpense.id)}
                />
          </TouchableOpacity>
          <TouchableOpacity
@@ -101,148 +98,138 @@ const ItemList = (props) => {
             }}
             />
       </TouchableOpacity>}
-      
      </View>
    );
  }
 
-
 const usualExpensesScreen = ({navigation, user}) => {
-
+   navigation.setOptions({ title: `Usual Expenses` });
+   
    const month = String(new Date().getMonth() + 1);
+   
+   // Initalize empty array to store usualExpenses
+   const [usualExpenses, setUsualExpenses] = useState([]);
+   const [title, setTitle] = useState("");   
+   const [initializing, setInitializing] = useState(true)
 
-   navigation.setOptions({ title: `Usual Expenses` })
-
-  const [title, setTitle] = useState("");
-
-
-  // Initalize empty array to store usualExpenses
-  const [usualExpenses, setUsualExpenses] = useState([]);
-
-  const [initializing, setInitializing] = useState(true)
-
-  // function to add usualExpense object in usualExpense list
-  const addusualExpense = async () => {
-      if (title.length > 0) {
-         // Add usualExpense to the list
-         let sendToFirestoreusualExpenses = {}
-         let usualExpenseMessage=title;
-         await db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[Date.now()]:usualExpenseMessage})
-         .catch((error) => {
-            db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').set({[Date.now()]:usualExpenseMessage})
+   // function to add usualExpense object in usualExpense list
+   const addusualExpense = async () => {
+         if (title.length > 0) {
+            // Add usualExpense to the list
+            let sendToFirestoreusualExpenses = {}
+            let usualExpenseMessage=title;
+            await db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[Date.now()]:usualExpenseMessage})
             .catch((error) => {
-               console.error("Error adding document: ", error);
+               db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').set({[Date.now()]:usualExpenseMessage})
+               .catch((error) => {
+                  console.error("Error adding document: ", error);
+               });
             });
-         });
-         setTitle("");
-      }
-      let temp = {}
-      for (let usualExpense in usualExpenses){
-         console.log('usualExpense', usualExpenses[usualExpense])
-         temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].description;
-      }
-
-  };
-
-  const editusualExpense = (id, expenseUpdate) => {
-      // setSortExpenses([...usualExpenses.filter((usualExpense)=>usualExpense.id!==id), { id: id, description: title}]);
-      // console.log(id, title)
-      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:expenseUpdate})
-      .catch((error) => {
-         console.error("Error adding document: ", error);
-      });
-  }
-
-
-  // function to delete usualExpense from the usualExpense list
-  const deleteusualExpense = id => {
-      // loop through usualExpense list and return usualExpenses that don't match the id
-      // update the state using setUsualExpenses function
-      // setSortExpenses(usualExpenses.filter(usualExpense => {
-      //    return usualExpense.id !== id;
-      // }));
-      db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:firebase.firestore.FieldValue.delete()})
-      .catch((error) => {
-         console.error("Error adding document: ", error);
-      });
-  };
-
-  const setSortExpenses = (inputExpenses) => {
-      // var temp = usualExpenses.slice(0);
-      setUsualExpenses([...inputExpenses.sort((a,b) => {
-         var x = a.id.toLowerCase();
-         var y = b.id.toLowerCase();
-         return x < y ? -1 : x > y ? 1 : 0;
-      })])
-  }
-
-  useEffect(() => {
-      let unsubscribe = () => {};
-      setInitializing(true);
-      try {
-         unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
-            let data = await querySnapshot.data()
-            let firebaseusualExpenses = []
-             console.log('data', data)
-            if (data) {
-               for (const id in data) {
-                  const description = data[id];
-                  firebaseusualExpenses.push({id, description})
-               }
-            let localExpenses;
-            firebaseusualExpenses.map((usualExpense) => {
-               localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
-            })
-            console.log(firebaseusualExpenses)
-            setSortExpenses([...usualExpenses, ...firebaseusualExpenses]);
+            setTitle("");
          }
+         let temp = {}
+         for (let usualExpense in usualExpenses){
+            console.log('usualExpense', usualExpenses[usualExpense])
+            temp[usualExpenses[usualExpense].id]=usualExpenses[usualExpense].description;
+         }
+
+   };
+
+   const editusualExpense = (id, expenseUpdate) => {
+         db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:expenseUpdate})
+         .catch((error) => {
+            console.error("Error adding document: ", error);
+         });
+   }
+
+
+   // function to delete usualExpense from the usualExpense list
+   const deleteusualExpense = id => {
+         db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').update({[id]:firebase.firestore.FieldValue.delete()})
+         .catch((error) => {
+            console.error("Error adding document: ", error);
+         });
+   };
+
+   // function to sort the expenses list which ensures that the UI does not glitch when an item from the list is clicked
+   const setSortExpenses = (inputExpenses) => {
+         setUsualExpenses([...inputExpenses.sort((a,b) => {
+            var x = a.id.toLowerCase();
+            var y = b.id.toLowerCase();
+            return x < y ? -1 : x > y ? 1 : 0;
+         })])
+   }
+
+   // initialize subscriptions to the firestore
+   useEffect(() => {
+         // preinitialize the unsubscribe in case the try statement fails
+         let unsubscribe = () => {};
+         setInitializing(true);
+         try {
+            unsubscribe = db.collection("users").doc(user.uid).collection(month).doc('usualExpenses').onSnapshot( async querySnapshot=>{
+               let data = await querySnapshot.data()
+               let firebaseusualExpenses = []
+               console.log('data', data)
+               if (data) {
+                  for (const id in data) {
+                     const description = data[id];
+                     firebaseusualExpenses.push({id, description})
+                  }
+               let localExpenses;
+               firebaseusualExpenses.map((usualExpense) => {
+                  localExpenses = usualExpenses.filter((firebaseusualExpense) => firebaseusualExpense.id!==usualExpense.id)
+               })
+               console.log(firebaseusualExpenses)
+               setSortExpenses([...usualExpenses, ...firebaseusualExpenses]);
+            }
+            })
+         } catch (error) {
+            console.log('Firestore error', error);
+         }
+
+         setInitializing(false);
+
+         const navUnsubscribe = navigation.addListener('onLeave', (e) => {
+            submit();
          })
-      } catch (error) {
-         console.log('Firestore error', error);
-      }
+         return () => {
+            unsubscribe();
+            navUnsubscribe();
+         }
+   }, []);
 
-      setInitializing(false);
-
-      const navUnsubscribe = navigation.addListener('submitBeforeGoing', (e) => {
-         submit();
-      })
-      return () => {
-         unsubscribe();
-         navUnsubscribe();
-      }
- }, []);
-
+   // show a loading screen if the current screen is not yet ready to display its data
    if (initializing) return <View style={styles.loadingContainer}>
       <LoadingScreen backgroundColor={'white'} color={'grey'}/>
    </View>
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.usualExpense}>
-        <TextInput
-          placeholder="Add a frequent expense"
-          value={title}
-          onChangeText={value => setTitle(value)}
-          style={styles.textbox}
-        />
-        <Button title="Add" color="green" onPress={() => addusualExpense()} />
+   return (
+      <View style={styles.container}>
+         <View style={styles.usualExpense}>
+         <TextInput
+            placeholder="Add a frequent expense"
+            value={title}
+            onChangeText={value => setTitle(value)}
+            style={styles.textbox}
+         />
+         <Button title="Add" color="green" onPress={() => addusualExpense()} />
+         </View>
+         <Text style={{marginRight:10, marginLeft:12}}>Note: This will add the expense to the expense suggestions bar.</Text>
+         <ScrollView >
+         {usualExpenses.map(usualExpense => (
+            <ItemList
+               key={usualExpense.id}
+               usualExpense={usualExpense}
+               editusualExpense={editusualExpense}
+               deleteusualExpense={deleteusualExpense}
+            />
+         ))}
+         </ScrollView>
       </View>
-      <Text style={{marginRight:10, marginLeft:12}}>Note: This will add the expense to the expense suggestions bar.</Text>
-
-      <ScrollView >
-        {usualExpenses.map(usualExpense => (
-          <ItemList
-            key={usualExpense.id}
-            usualExpense={usualExpense}
-            editusualExpense={editusualExpense}
-            deleteusualExpense={deleteusualExpense}
-          />
-        ))}
-      </ScrollView>
-    </View>
-  );
+   );
 }
 
+// styles for the current screen
 const styles = StyleSheet.create({
    statusBar: {
       backgroundColor: "#4050b5",

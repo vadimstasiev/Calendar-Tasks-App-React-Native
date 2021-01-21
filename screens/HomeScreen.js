@@ -1,42 +1,30 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { View } from "react-native";
-import { Container, Header, Text, Form, Button, Item, Label, Input, Content, Icon, Footer, FooterTab } from "native-base";
+import { Container, Text, Button, Content, Footer, FooterTab } from "native-base";
 import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
-
-
 import CalendarScreen from './CalendarScreen';
-import CalendarScreenDemo from './CalendarScreenDemo';
 import BudgetScreen from './BudgetScreen';
 import UsualExpenses from './UsualExpenses';
 import LoadingScreen from "./LoadingScreen";
 
-let db = firestore();
-
 const HomeScreen = (props) => {
-
-  
   const {navigation} = props;
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [screen, setScreen] = useState('Calendar');
-
-
   // Handle user state changes
   const onAuthStateChanged = async user => {
     if(user){
       setUser(user);
       await auth().currentUser.reload();
-      // console.log(user)
     }
     if (initializing) setInitializing(false);
   }
   
   const signOut =()=>{
     auth().signOut().then(() => {
-      // Sign-out successful.
-      console.log("Sign-out successful");
+      // clear the local user data
       setUser(undefined);
     })
   }
@@ -46,6 +34,7 @@ const HomeScreen = (props) => {
     return subscriber; // unsubscribe on unmount
   }, [user, screen]);
   
+  // show an initialization screen while the data is loading
   if (initializing) return <LoadingScreen backgroundColor={'white'}/>; 
 
   
@@ -56,10 +45,7 @@ const HomeScreen = (props) => {
           <>
           <Content >
           {screen==='Calendar'?
-            <>
               <CalendarScreen user={user} {...props}/>
-              {/* <CalendarScreenDemo user={user} {...props}/> */}
-            </>
             :<></>}
           {screen==='Budget'?
             <BudgetScreen user={user} {...props}/>

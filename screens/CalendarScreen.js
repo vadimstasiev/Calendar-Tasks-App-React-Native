@@ -1,16 +1,10 @@
 import _ from 'lodash';
-import moment from 'moment';
-
-import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import { set } from 'react-native-reanimated';
 
 let db = firestore();
-
 
 const testIDs = {
   menu: {
@@ -40,16 +34,12 @@ const testIDs = {
 
 
 const CalendarsScreen = ({navigation, user}) => {
-
   navigation.setOptions({ title: `Calendar` });
-
   const [currentMonth, setCurrentMonth] = useState(String(new Date().getMonth() + 1))
-
   const [budgets, setBudgets] = useState([]); 
-
   const [days, setDays] = useState([])
 
-
+  // converts a day/month integer to a 2 digit string, e.g. 2 => 02 , 9 => 09, 12 => 12
   const convertTwoDigit = (digit) => {
     if (digit.toString().length == 1) {
       return "0" + digit;
@@ -61,27 +51,27 @@ const CalendarsScreen = ({navigation, user}) => {
     var day = new Date().getDate();
     var month = new Date().getMonth() + 1;
     var year = new Date().getFullYear();
-
-    // return '2012-05-16';
-    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day);//format: yyyy-mm-dd;
+    // return format: yyyy-mm-dd
+    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day); 
   }
 
+  // get the date of the current month selected
   const getDate=(day)=>{
-    var month = new Date().getMonth() + 1;
+    var month = currentMonth;
     var year = new Date().getFullYear();
-
-    // return '2012-05-16';
-    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day);//format: yyyy-mm-dd;
+    // return format: yyyy-mm-dd
+    return year + '-' + convertTwoDigit(month) + '-' + convertTwoDigit(day);
   }
 
+  // action when clicking a day
   const dayPress = (dayData) => {
     console.log(dayData)
     const {day, month} = dayData;
     navigation.navigate('Day', {user, day: String(day), month: String(month)})
   }
 
+  // sorting budget data so that the UI doesn't glitch
   const setSortedBudgets = (budgets) => {
-    // var temp = habits.slice(0);
     setBudgets([...budgets.sort((a,b) => {
        var x = Number(a.budget);
        var y = Number(b.budget);
@@ -89,6 +79,7 @@ const CalendarsScreen = ({navigation, user}) => {
     })])
   }
 
+  // calculate the color of a given day based on the data retrieved from firestore
   const calculateColor = (budget) => {
     let color = 'default';
     budgets.map(bgt => {
@@ -132,6 +123,7 @@ const CalendarsScreen = ({navigation, user}) => {
     }
   }, [])
 
+  // generates the calendar data in the right format to pass straight into the calendar component
   const generateCalendarData = () => {
     const data = {}
     days.map(day => {
