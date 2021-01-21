@@ -1,9 +1,9 @@
 {
-  "name": "whatever",
+  "name": "pocket",
   "displayName": "Pocket inCheck",
   "expo": {
-    "name": "whatever",
-    "slug": "whatever",
+    "name": "pocket",
+    "slug": "pocket",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"

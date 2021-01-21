@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { View } from "react-native";
-import auth from "@react-native-firebase/auth";
+import React from "react";
 import 'react-native-gesture-handler';
-
-import { Container, Header, Text, Form, Button, Item, Label, Input, Content, Icon } from "native-base";
-
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
-
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DayScreen from './screens/DayScreen';
 
-
-
 const Stack = createStackNavigator();
-
 const App = () => {
-
   return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
@@ -42,5 +30,3 @@ const App = () => {
 }
 
 export default App;
-
-
